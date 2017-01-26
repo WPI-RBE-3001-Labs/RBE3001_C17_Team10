@@ -8,16 +8,16 @@
 #include <avr/io.h>
 
 #define POTCHAN 7
-#define button1 DDRBbits._P5
-#define button2 DDRBbits._P6
-#define button3 DDRBbits._P7
+double compare = 0;
 int timestamp = 0;
 
 void printPotVal(int potVal) {
 	//5000/1023
 	unsigned int mV = potVal * 4.88758;		//in millivolts
+
 	//300/1023
 	unsigned int angle = potVal * .293255132;		//in degrees
+
 	printf("%d %d %d %d \n\r", timestamp, potVal, mV, angle);
 }
 
@@ -34,29 +34,39 @@ void sampleADC() {
 		timestamp++;
 	}
 }
-
-setupPWMPin() {
-	DDRAbits._P5 = OUTPUT;
+setCompareValue(double desiredFrequency) {
+	//desired frequncy in Hz
+	//2048 is 2*Prescaler(in this case the precaler is 1024
+	compare = (F_CPU / (2048 * desiredFrequency)) - 1;
 
 }
 
 int main() {
 	initRBELib();
+	int test = 0;
+//
 	debugUSARTInit(115200);
-	initADC(7);
+	//putCharDebug('a');
+//
+	//initADC(7);
 
-	initTimer(0, NORMAL, 0);
-	setupPWMPin();
+	//setCompareValue(100);//Compare value to hit compare value at a 100Hz frequency
+	//printf("%G", compare);
+	initTimer(1, NORMAL, compare);
+
 	initializeSquareWaveGenerator();
 
+	//DDRB |= (1 << PIN7);	//set pin 7 to output
 	while (1) {
 		/*Part 2*/
 		//sampleADC();
 		/*Part 3*/
-		pollButtons();
-
-		//adjustDutyCycle();
-		//putCharDebug('a');
+		//	adjustDutyCycle();
+//		pollButtons();
+//		PORTB = (test << PIN7);	//write portB pin 7 high
+//		putCharDebug(test + '0');
+//		_delay_ms(200);
+//		test = !test;
 	}
 
 	return 0;

@@ -8,22 +8,25 @@
 #include <avr/io.h>
 
 void initADC(int channel) {
-	//Set everything to inputs
-	//bit of a hack for now will need to implement how to do it for a specific channel later on
-	DDRA &= 0b00000000;
+	//Set Port A register for the corresponding channel to input
+	DDRA &= ~(1 << channel);
 
-	//Reference voltages of VCC and ground
-	ADMUX = (0 << REFS1) | (1 << REFS0);
+	//Disable digital input on ADC channel
+	DIDR0 |= (1 << channel);
 
-	//Enable the ADC
-	//Select the ADC prescaler to division factor of 128
-	ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+	ADMUX = (0 << REFS1) |	//Sets Reference voltage to Vcc
+			(1 << REFS0);	//Sets Reference voltage to Vcc
+
+	ADCSRA = (1 << ADEN) |	//Enable the ADC
+			(1 << ADPS2) |	//Select the ADC prescaler to 128
+			(1 << ADPS1) | //Select the ADC prescaler to 128
+			(1 << ADPS0);	//Select the ADC prescaler to 128
+
 }
 
 void clearADC(int channel) {
-	//Set everything to inputs
-	//bit of a hack for now will need to implement how to do it for a specific channel later on
-	DDRA &= 0b00000000;
+	//Set Port A register for the corresponding channel to input
+	DDRA &= ~(1 << channel);
 
 	//Clear the data registers
 	ADCH = 0;
@@ -33,7 +36,7 @@ void clearADC(int channel) {
 
 unsigned short getADC(int channel) {
 	//Select the channel
-	ADMUX = (1 << REFS1) | (1 << REFS0) | channel;
+	ADMUX |= channel;
 
 	//start the conversion
 	PRR = (0 << PRADC);
@@ -45,7 +48,6 @@ unsigned short getADC(int channel) {
 
 	return ADC;
 }
-
 
 void changeADC(int channel) {
 

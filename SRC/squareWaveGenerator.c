@@ -10,89 +10,99 @@
 int count = 0;
 int ticksNeeded = 1;
 int highTime = 0;
-int period = 0;
+int lowTime = 0;
+int periodCount = 0;
 float duty = 0;
-int upFlag = 2;
+volatile int upFlag = 0;
 int timerCount = 0;
 
 void initializeSquareWaveGenerator() {
-	DDRBbits._P0 = INPUT;
-	DDRBbits._P1 = INPUT;
-	DDRBbits._P2 = INPUT;
+	DDRB = (0 << PB2) |		//setup Port B pins 2,1,0 as inputs
+			(0 << PB1) | 	//setup Port B pins 2,1,0 as inputs
+			(0 << PB0); 	//setup Port B pins 2,1,0 as inputs
 
-	//DDRAbits._P5 = OUTPUT;
-//	PINAbits._P5 = HIGH;
+	//setup Port A pin 5 as an output, keeps the ADC analog pin as an input
+	DDRA |= (1 << PA4);
 
 	duty = .5;
-	period = 206;
-	highTime = 512;
-
-//	adjustDutyCycle();
+	periodCount = 100;
+	highTime = 20;
+	//adjustDutyCycle();
 }
 void setPinHIGH() {
-	PORTA = (1 << PA5);
-	//PINAbits._P5 = HIGH;
+	//Changes only what's on Port A Pin 4 to high
+	PORTA |= (1 << PA4);
+
 }
 void setPinLOW() {
-
-//	PINAbits._P5 = LOW;
-
-	PORTA = (0 << PA5);
-
+	//Changes only what's on Port A Pin 4 to low
+	PORTA &= ~(1 << PA4);
 }
 
 void setPin(int upFlag) {
 	if (upFlag == 0) {
 		setPinHIGH();
+		TCNT1 = 32768;
 	} else if (upFlag == 1) {
 		setPinLOW();
+		TCNT1 = 32768;
 	}
+
 }
 
 void pollButtons() {
-	//If the first button is pressed initialize
-	//a timer for a frequency of 1Hz
-//	if (PINBbits._P0 == HIGH) {
-//		ticksNeeded = 512;
-//	}
-//
-//	//If the second button is pressed initialize
-//	//a timer for a frequency of 20Hz
-//	else if (PINBbits._P1 == HIGH) {
-//		ticksNeeded = 26;
-//	}
-//
-//	//If the third button is pressed initialize
-//	//a timer for a frequency of 100Hz
-//	else if (PINBbits._P2 == HIGH) {
-//		ticksNeeded = 5;
-//
-//	} else
-//		ticksNeeded = 1;
+//	If the first button is pressed initialize
+//	a timer for a frequency of 1Hz
 
-	setPin(upFlag);
+	if (PINB0 == HIGH) {
+		//If the ISR goes off at a rate of 100Hz, then it would take 100 interrupts to
+		//count up to the period count to toggle the output
+		periodCount = 100;
+
+	}
+
+	//If the second button is pressed initialize
+	//a timer for a frequency of 20Hz
+	else if (PINB1 == HIGH) {
+		//If the ISR goes off at a rate of 100Hz, then it would take 20 interrupts to
+		//count up to the period count to toggle the output
+		periodCount = 20;
+	}
+
+	//If the third button is pressed initialize
+	//a timer for a frequency of 100Hz
+	else if (PINB2 == HIGH) {
+		//If the ISR goes off at a rate of 100Hz, then it would take 1 interrupts to
+		//count up to the period count to toggle the output
+		periodCount = 1;
+	}
+
 }
 void adjustDutyCycle() {
 	/*For now lets just get a duty cycle of .5*/
-	//	int reading = getADC(7);
-	//duty = (reading / 1024) * 100;
-	period = F_CPU / ticksNeeded;	// in ticks
-	highTime = period * duty;
+	int reading = getADC(7);
+	duty = (reading / 1024);
+	//printf("%f \n\r", duty);
+	highTime = 256 * duty;
+	lowTime = 256 * (1 - duty);
+
 }
 
 //ISR
 //Just flips a pin high to low based on the frequency of the timer
-ISR(TIMER0_OVF_vect) {
-	count++;
-	if (count <= 562) {
-		upFlag = 1;
-	} else {
-		upFlag = 0;
-		count = 0;
-	}
 
-	if (count > 1125) {
+ISR(TIMER1_OVF_vect) {
+	//putCharDebug('a');
+	count++;
+	if (count <= 1) {
+		//putCharDebug('a');
+		upFlag = !upFlag;
+		setPin(upFlag);
+	} else if (count > 1 && count < 3) {
+		upFlag = !upFlag;
+		setPin(upFlag);
 		count = 0;
-	}
+	} else
+		count = 0;
 
 }

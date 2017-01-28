@@ -60,13 +60,14 @@ int main(void) {
 	// printf uses a fair amount of memory to be included but makes serial printing much easier
 	printf("ADC-COUNT VOLTAGE ARM-ANGLE \n\r");
 	initADC(2);
+	initSPI();
 //
 	while (1) {
 		//PART 1
 //		sampleADC(60);
 
 		//Part 2
-		outputTriangle(2000);
+		outputTriangle(4095);
 	}
 	//POT VALUES
 	//720 = 90 deg

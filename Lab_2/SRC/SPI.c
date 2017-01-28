@@ -15,8 +15,36 @@ void initSPI() {
 
 	PORTB = (HIGH << PB4);			//Drive the slave select pin high
 
+
+
+
+	//Deassert all the chip selects by setting them as outputs and set high
+
+	DDRC = (OUTPUT << PC0) |			//Set the spare chip select as output
+			(OUTPUT << PC1) |		//Set the CoProcessor chip select as output
+			(OUTPUT << PC2) |			//Set the spare chip select as output
+			(OUTPUT << PC3) |			//Set the spare chip select as output
+			(OUTPUT << PC4) |			//Set the Enc 1 chip select as output
+			(OUTPUT << PC5) |			//Set the Enc 0  chip select as output
+			(OUTPUT << PC6);			//Set the spare chip select as output
+
+	DDRD = (OUTPUT << PD4);			//Set the Lin_Dac chip select as output
+
+	PORTC = (HIGH << PC0) |			//Choose the spare chip select port as not a slave
+			(HIGH << PC1) |			//Choose the CoProcessor chip select port as not a slave
+			(HIGH << PC2) |			//Choose the spare chip select port as not a slave
+			(HIGH << PC3) |			//Choose the spare chip select port as not a slave
+			(HIGH << PC4) |			//Choose the Enc1 chip select port as not a slave
+			(HIGH << PC5) |			//Choose the Enc0 chip select port as not a slave
+			(HIGH << PC6);			//Choose the spare chip select port as not a slave
+
+	PORTD = (HIGH << PC7);	//Choose the Lin_DAC chip select port as not a slave
+
+
+
+
 	/*SPI Control Register 0	 */
-	SPCR = (0 << SPIE) | 		// SPI interrupt enable, leave this off for now
+	SPCR = (0 << SPIE) | // SPI interrupt enable, leave this off for now
 			(1 << SPE) | 		//SPI enable, written to one is enabled
 			(1 << DORD) |  		//Most significant bit first
 			(1 << MSTR) | 		//Master SPI mode
@@ -29,6 +57,7 @@ void initSPI() {
 	SPSR = (0 << SPI2X) |		//Double SPI Speed, disable for now
 			(0 << WCOL) |//Initialize the write collision flag to 0 just in case
 			(0 << SPIF);		//Clear any preexisting SPI interrupt flags
+
 }
 
 unsigned char spiTransceive(BYTE data) {
@@ -39,5 +68,5 @@ unsigned char spiTransceive(BYTE data) {
 		;
 	//Read any received data
 	return SPDR;
-	return 'a';
+
 }

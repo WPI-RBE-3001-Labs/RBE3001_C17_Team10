@@ -4,42 +4,52 @@
  *      Author: Joest
  */
 
-
 #include "RBELib/RBELib.h"
 //For use of abs()
 #include <stdlib.h>
 
-//character for receiving serial data
-char inchar;
-int lowADC = 0;
-int highADC=1023;
+#define POTCHAN 2
+void printPotVal(int potVal) {
+	//5000/1023
+	unsigned int mV = potVal * 4.88758;		//in millivolts
 
+	//300/1023
+	unsigned int angle = potVal * .293255132;		//in degrees
 
-int main(void)
-{
-	  //Enable printf() and setServo()
-	  initRBELib();
+	printf("%d %d %d \n\r", potVal, mV, angle);
+}
 
-	  // Write the USARTDebug.c file using the function prototypes in the H file to enable the usart
-	  //Set the baud rate of the UART
-	  debugUSARTInit(115200);
-	  // printf uses a fair amount of memory to be included but makes serial printing much easier
-	  printf("PutCharDebug is complete \n\r");
+void readPotVal() {
+	int val = getADC(POTCHAN);
+	clearADC(POTCHAN);
+	printPotVal(val);
+}
 
-	  	  while(1)
-	  	  {
-	  		  //The get char debug function will return when a character is received
-	  		  inchar = getCharDebug();
-	  		  //Comment out this line once you have it working correctly
-	  		 printf("This line will print when a character is received from the serial connection \n\r");
+void sampleADC(int seconds) {
+	int timestamp = 0;
+	while (timestamp < seconds) {
+		readPotVal(POTCHAN);
+		_delay_ms(1000);
+		timestamp++;
+	}
+}
 
-	  		if (inchar == 'A')
-	  		{
-	  			//Switch which print statement is commented out when your ready for matlab data collection example
-	  			//matlab will buffer all characters until \n\r
-	  			printf("This will print if the character sent is an A \n\r");
-	  	      //printf("%4d\t, %4d,\n\r", lowADC, highADC);
-	  		}
-	  	  }
+int main(void) {
+	//Enable printf() and setServo()
+	initRBELib();
+
+	// Write the USARTDebug.c file using the function prototypes in the H file to enable the usart
+	//Set the baud rate of the UART
+	debugUSARTInit(115200);
+	// printf uses a fair amount of memory to be included but makes serial printing much easier
+//	initADC(2);
+//
+//	sampleADC(2, 60);
+//
+//
+
+	//POT VALUES
+	//720 = 90 deg
+	//340 = 0 deg
 }
 

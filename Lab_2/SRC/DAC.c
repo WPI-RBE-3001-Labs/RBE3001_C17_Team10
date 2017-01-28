@@ -8,11 +8,9 @@
 #include <RBELib/RBELib.h>
 
 void DACinit() {
-//Set the DAC CS pin as an output
-	DDRD |= (OUTPUT << PD4);
+//Select the DAC as an SPI Slave by driving the chip select low
+	PORTD = (LOW << PD4);
 
-	//Enable SPI to the DAC by sending a high CS
-	PORTD |= (HIGH << PD4);
 
 }
 void setDAC(int DACn, int SPIVal) {

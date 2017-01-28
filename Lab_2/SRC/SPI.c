@@ -7,6 +7,8 @@
 #include <avr/io.h>
 #include <RBELib/RBELib.h>
 void initSPI() {
+
+	PRR0 &= ~(1 << PRSPI );    		//enables SPI
 	// Set MOSI and SCK output
 	DDRB = (OUTPUT << PB7) | 		//Set SCK to output
 			(INPUT << PB6) | 		//Set MISO to input

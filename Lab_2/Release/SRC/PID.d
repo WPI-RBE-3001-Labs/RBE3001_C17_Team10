@@ -1,4 +1,4 @@
-SRC/DAC.d SRC/DAC.o: ../SRC/DAC.c \
+SRC/PID.d SRC/PID.o: ../SRC/PID.c \
   C:\Users\thagen\Downloads\rbelib-17.1.0\rbelib-17.1.0\RBELib\include/RBELib/RBELib.h \
   C:\Users\thagen\Downloads\rbelib-17.1.0\rbelib-17.1.0\RBELib\include/RBELib/ADC.h \
   C:\Users\thagen\Downloads\rbelib-17.1.0\rbelib-17.1.0\RBELib\include/RBELib/DAC.h \

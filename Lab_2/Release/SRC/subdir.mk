@@ -6,6 +6,7 @@
 C_SRCS += \
 ../SRC/ADC.c \
 ../SRC/DAC.c \
+../SRC/PID.c \
 ../SRC/Ports.c \
 ../SRC/SPI.c \
 ../SRC/USART.c \
@@ -14,6 +15,7 @@ C_SRCS += \
 OBJS += \
 ./SRC/ADC.o \
 ./SRC/DAC.o \
+./SRC/PID.o \
 ./SRC/Ports.o \
 ./SRC/SPI.o \
 ./SRC/USART.o \
@@ -22,6 +24,7 @@ OBJS += \
 C_DEPS += \
 ./SRC/ADC.d \
 ./SRC/DAC.d \
+./SRC/PID.d \
 ./SRC/Ports.d \
 ./SRC/SPI.d \
 ./SRC/USART.d \
@@ -32,7 +35,7 @@ C_DEPS += \
 SRC/%.o: ../SRC/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: AVR Compiler'
-	avr-gcc -I"C:\Users\thagen\workspace\RBELib\include" -Wall -Os -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega644p -DF_CPU=18432000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
+	avr-gcc -I"C:\Users\thagen\Downloads\rbelib-17.1.0\rbelib-17.1.0\RBELib\include" -Wall -Os -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega644p -DF_CPU=18432000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

@@ -8,15 +8,12 @@
 #include <RBELib/RBELib.h>
 void initSPI() {
 
-//	PRR0 &= ~(1 << PRSPI);    		//enables SPI
+	SPI_MISO_DDR = INPUT;		//Set MISO to input
+	SPI_MOSI_DDR = OUTPUT;		//Set MOSI to output
+	SPI_SCK_DDR = OUTPUT;		//Set SCK to output
+	SPI_MASTER_SS = OUTPUT;		//Set SS to output
 
-// Set MOSI and SCK output
-	DDRB = (OUTPUT << PB7) | //Set SCK to output
-			(INPUT << PB6) | //Set MISO to input
-			(OUTPUT << PB5) | //Set MOSI to output
-			(OUTPUT << PB4); //Set SS to output
-
-	PORTB = (HIGH << PB4);			//The AVR is the master
+	PORTB = (HIGH << PB4);	//Set the Master SS high, AKA the AVR is the master
 
 	/*SPI Control Register 0	 */
 	SPCR = (1 << SPIE) | // SPI interrupt enable, leave this off for now
@@ -59,7 +56,6 @@ void initSPI() {
 
 unsigned char spiTransceive(BYTE data) {
 	SPDR = data;
-	printf("%d \n\r", data);
 	// Wait for transmission to complete
 	while (!(SPSR & (1 << SPIF)))
 		;

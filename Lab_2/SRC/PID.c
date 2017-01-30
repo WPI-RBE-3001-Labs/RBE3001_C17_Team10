@@ -8,21 +8,14 @@
 #include <RBELib/RBELib.h>
 #include <math.h>
 
-#defne ABS_MAX_OUTPUT 4095 // As we can't go higher in our DAC
+#define ABS_MAX_OUTPUT 4095 // As we can't go higher in our DAC
 
 pidConst pidConsts;
 
-Kp_H ; // HERE we set the PID
-Ki_H ; // values for the motor
-Kd_H ; // on the higher link
-
-Kp_L ; // HERE we set the PID
-Ki_L ; // values for the motor
-Kd_L ; // on the lower link
-
-int error = setPoint - actPos; // error calculation
-double errSum
-double lasterr
+int error;
+double dErr;
+double errSum;
+double lastErr;
 
 void setConst(char link, float Kp, float Ki, float Kd) {
 	if (link == 'High') {			//Sets PID constants for higher link
@@ -36,15 +29,10 @@ void setConst(char link, float Kp, float Ki, float Kd) {
 	}
 }
 
-
-signed int calcPID(char link, int setPoint, int actPos);
-
-
-
-double dErr = (error - lastErr) / timeChange; // D error
-Output = kp * error + ki * errSum + kd * dErr; //Out put of calculated PID
-lastErr = error;  //things needed for the re-run
-
-
-
+//signed int calcPID(char link, int setPoint, int actPos) {
+//	error = setPoint - actPos; // error calculation
+//	dErr = (error - lastErr) / timeChange; 			// D error
+//	output = kp * error + ki * errSum + kd * dErr; 	//Output of calculated PID
+//	lastErr = error;  							//things needed for the re-run
+//}
 

@@ -12,13 +12,23 @@
 
 pidConst pidConsts;
 
-int error;
-double dErr;
-double errSum;
-double lastErr;
+int timePassed = 0;
+
+int errorHIGH = 0;
+double dErrHIGH = 0;
+double errSumHIGH = 0;
+double lastErrHIGH = 0;
+
+int errorLOW = 0;
+double dErrLOW = 0;
+double errSumLOW = 0;
+double lastErrLOW = 0;
+
+signed int outputLOW = 0;
+signed int outputHIGH = 0;
 
 void setConst(char link, float Kp, float Ki, float Kd) {
-	if (link == 'High') {			//Sets PID constants for higher link
+	if (link == 'H') {			//Sets PID constants for higher link
 		pidConsts.Kp_H = Kp;
 		pidConsts.Ki_H = Ki;
 		pidConsts.Kd_H = Kd;
@@ -29,10 +39,27 @@ void setConst(char link, float Kp, float Ki, float Kd) {
 	}
 }
 
-//signed int calcPID(char link, int setPoint, int actPos) {
-//	error = setPoint - actPos; // error calculation
-//	dErr = (error - lastErr) / timeChange; 			// D error
-//	output = kp * error + ki * errSum + kd * dErr; 	//Output of calculated PID
-//	lastErr = error;  							//things needed for the re-run
-//}
+signed int calcPID(char link, int setPoint, int actPos) {
+	if (link == 'H') {
+		errorHIGH = setPoint - actPos; // error calculation
+		dErrHIGH = (errorHIGH - lastErrHIGH) / timePassed;
+		errSumHIGH += pidConsts.Ki_H * errorHIGH; //running sum of the errors multiplied by the Ki constant
+		outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
+				+ pidConsts.Kp_H * errorHIGH; //Output of calculated PID
+		lastErrHIGH = errorHIGH;  				//things needed for the re-run
+	} else {
+		errorLOW = setPoint - actPos; // error calculation
+		dErrLOW = (errorLOW - lastErrLOW) / timePassed;
+		errSumLOW += pidConsts.Ki_H * errorLOW; //running sum of the errors multiplied by the Ki constant
+		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
+				+ pidConsts.Kp_L * errorLOW; //Output of calculated PID
+		lastErrLOW = errorLOW;  				//things needed for the re-run
+	}
+}
+
+ISR(TIMER0_COMPA_vect) {
+	//Some arbitrary set point for now
+	//calcPID('L', 0, getADC(2));
+
+}
 

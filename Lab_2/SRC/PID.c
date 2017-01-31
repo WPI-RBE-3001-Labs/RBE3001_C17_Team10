@@ -47,6 +47,7 @@ signed int calcPID(char link, int setPoint, int actPos) {
 		outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
 				+ pidConsts.Kp_H * errorHIGH; //Output of calculated PID
 		lastErrHIGH = errorHIGH;  				//things needed for the re-run
+		return outputHIGH;
 	} else {
 		errorLOW = setPoint - actPos; // error calculation
 		dErrLOW = (errorLOW - lastErrLOW) / timePassed;
@@ -54,6 +55,7 @@ signed int calcPID(char link, int setPoint, int actPos) {
 		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
 				+ pidConsts.Kp_L * errorLOW; //Output of calculated PID
 		lastErrLOW = errorLOW;  				//things needed for the re-run
+		return outputLOW;
 	}
 }
 

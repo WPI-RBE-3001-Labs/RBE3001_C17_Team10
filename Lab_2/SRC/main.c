@@ -42,13 +42,15 @@ void outputTriangle(int peak) {
 	int i = 0;
 	for (i = 0; i <= peak; i++) {
 		setDAC(0, i);
-		_delay_ms(10);
+		setDAC(1,peak-i);
 	}
 	for (i = peak; i > 0; i--) {
 		setDAC(0, i);
-		_delay_ms(10);
+		setDAC(1, peak-i);
+
 	}
 }
+
 
 int main(void) {
 	//Enable printf() and setServo()
@@ -58,7 +60,6 @@ int main(void) {
 	//Set the baud rate of the UART
 	debugUSARTInit(115200);
 
-	// printf uses a fair amount of memory to be included but makes serial printing much easier
 //	printf("ADC-COUNT VOLTAGE ARM-ANGLE \n\r");
 	initADC(2);
 	initSPI();
@@ -66,12 +67,11 @@ int main(void) {
 	while (1) {
 		//printf("%d \n\r", SPDR);
 		//PART 1
-//		sampleADC(60);
+		//sampleADC(60);
 
 		//Part 2
-//	outputTriangle(1024);
-		setDAC(0, 100);
-
+		outputTriangle(4095);
+		//setDAC(3, 400);
 
 	}
 	//POT VALUES

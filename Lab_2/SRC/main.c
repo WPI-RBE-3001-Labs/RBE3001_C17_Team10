@@ -42,22 +42,26 @@ void outputTriangle(int peak) {
 	int i = 0;
 	for (i = 0; i <= peak; i++) {
 		setDAC(0, i);
-		setDAC(1,peak-i);
+		setDAC(1, peak - i);
 	}
 	for (i = peak; i > 0; i--) {
 		setDAC(0, i);
-		setDAC(1, peak-i);
+		setDAC(1, peak - i);
 
 	}
 }
-
+void goTo(int setPos) {
+	int actPos = getADC(POTCHAN);
+	int value = calcPID('L', setPos, actPos);
+	driveLink('L', value);
+}
 
 int main(void) {
-	//Enable printf() and setServo()
+//Enable printf() and setServo()
 	initRBELib();
 
-	// Write the USARTDebug.c file using the function prototypes in the H file to enable the usart
-	//Set the baud rate of the UART
+// Write the USARTDebug.c file using the function prototypes in the H file to enable the usart
+//Set the baud rate of the UART
 	debugUSARTInit(115200);
 
 //	printf("ADC-COUNT VOLTAGE ARM-ANGLE \n\r");
@@ -73,15 +77,11 @@ int main(void) {
 		//outputTriangle(4095);
 		//setDAC(3, 400);
 
-		driveLink( 0,  1000);
-		_delay_ms(1000);
-		driveLink( 0,  -1000);
-		_delay_ms(1000);
-
+		goTo(700);
 	}
-	//POT VALUES
-	//720 = 90 deg
-	//340 = 0 deg
+//POT VALUES
+//720 = 90 deg
+//340 = 0 deg
 
 }
 

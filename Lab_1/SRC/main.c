@@ -7,7 +7,7 @@
 #include <RBELib/RBELib.h>
 #include <avr/io.h>
 
-#define POTCHAN 7
+#define POTCHAN 2
 double compare = 0;
 int timestamp = 0;
 
@@ -43,23 +43,23 @@ setCompareValue(double desiredFrequency) {
 
 int main() {
 	initRBELib();
-	int test = 0;
+	//int test = 0;
 //
 	debugUSARTInit(115200);
 	//putCharDebug('a');
 //
-	//initADC(7);
+	initADC(2);
 
 	//setCompareValue(100);//Compare value to hit compare value at a 100Hz frequency
 	//printf("%G", compare);
-	initTimer(1, NORMAL, compare);
+//	initTimer(1, NORMAL, compare);
 
-	initializeSquareWaveGenerator();
+//	initializeSquareWaveGenerator();
 
 	//DDRB |= (1 << PIN7);	//set pin 7 to output
 	while (1) {
 		/*Part 2*/
-		//sampleADC();
+		sampleADC();
 		/*Part 3*/
 		//	adjustDutyCycle();
 //		pollButtons();

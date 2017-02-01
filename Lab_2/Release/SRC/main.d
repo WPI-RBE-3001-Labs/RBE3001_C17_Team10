@@ -1,46 +1,49 @@
-SRC/main.o: ../SRC/main.c \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/RBELib.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/ADC.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/DAC.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/Debug.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/motors.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/USARTDebug.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/timer.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/Periph.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/pot.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/PID.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/reg_structs.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/ports.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/SPI.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/SetServo.h \
- /home/alex/git/rbelib16-17/RBELib/include/RBELib/SlaveSelects.h
+SRC/main.d SRC/main.o: ../SRC/main.c \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/RBELib.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/ADC.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/DAC.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/Debug.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/motors.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/USARTDebug.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/timer.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/Periph.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/pot.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/PID.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/reg_structs.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/ports.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/SPI.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/SetServo.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/SlaveSelects.h \
+  C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/ADC.h
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/RBELib.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/RBELib.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/ADC.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/ADC.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/DAC.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/DAC.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/Debug.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/Debug.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/motors.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/motors.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/USARTDebug.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/USARTDebug.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/timer.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/timer.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/Periph.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/Periph.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/pot.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/pot.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/PID.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/PID.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/reg_structs.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/reg_structs.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/ports.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/ports.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/SPI.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/SPI.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/SetServo.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/SetServo.h:
 
-/home/alex/git/rbelib16-17/RBELib/include/RBELib/SlaveSelects.h:
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/SlaveSelects.h:
+
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include/RBELib/ADC.h:

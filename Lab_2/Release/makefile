@@ -50,7 +50,7 @@ all: Lab_2.elf secondary-outputs
 Lab_2.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AVR C Linker'
-	avr-gcc -Wl,-Map,Lab_2.map -Wl,-u,vfprintf -lprintf_flt -lm -L"R:\3001\rbelib-17.1.0\RBELib\Release" -mmcu=atmega644p -o "Lab_2.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	avr-gcc -Wl,-Map,Lab_2.map -Wl,-u,vfprintf -lprintf_flt -lm -L"C:\Users\Tom\git\RBE3001_C17_Team10\RBELib\RBELib\Release" -mmcu=atmega644p -o "Lab_2.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -74,7 +74,7 @@ Lab_2.eep: Lab_2.elf
 
 sizedummy: Lab_2.elf
 	@echo 'Invoking: Print Size'
-	-avr-size --format=avr --mcu=atmega644p Lab_2.elf
+	-avr-size --format=berkeley -t Lab_2.elf
 	@echo 'Finished building: $@'
 	@echo ' '
 

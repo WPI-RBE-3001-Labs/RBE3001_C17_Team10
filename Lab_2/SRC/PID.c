@@ -27,6 +27,9 @@ float lastErrLOW = 0;
 float outputLOW = 0;
 float outputHIGH = 0;
 
+int maxCount = 0;
+int tempCount = 0;
+
 void setConst(char link, float Kp, float Ki, float Kd) {
 	switch (link) {
 	case 'H': //Sets PID constants for higher link
@@ -63,10 +66,19 @@ signed int calcPID(char link, int setPoint, int actPos) {
 	}
 
 }
+initPIDSampling() {
+	maxCount = (F_CPU / 36864) * ((float) 1 / 100);
+	tempCount = 0;
+	initTimer(1, CTC, 36864);
+}
 
 ISR( TIMER0_COMPA_vect) {
-	//Some arbitrary set point for now
-	//calcPID('L', 0, getADC(2));
-
+	if (tempCount >= maxCount) {
+		//calculate the pid output for the arm according to the actual position
+		driveLinks('L', calcPID('L', 0, getADC(2)));
+		tempCount = 0;
+	} else {
+		tempCount++;
+	}
 }
 

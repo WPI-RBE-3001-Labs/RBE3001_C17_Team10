@@ -67,7 +67,8 @@ int main(void) {
 //	printf("ADC-COUNT VOLTAGE ARM-ANGLE \n\r");
 	initADC(2);
 	initSPI();
-//
+
+	initTimer(0, NORMAL, 0);
 	while (1) {
 		//printf("%d \n\r", SPDR);
 		//PART 1
@@ -78,6 +79,9 @@ int main(void) {
 		//setDAC(3, 400);
 
 		goTo(700);
+
+		//lab part 3
+
 	}
 //POT VALUES
 //720 = 90 deg

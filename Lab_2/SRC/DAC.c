@@ -6,6 +6,7 @@
  */
 #include <avr/io.h>
 #include <RBELib/RBELib.h>
+
 void setDAC(int DACn, int SPIval) {
 	//We need to send out 3 "packages" for configuring the DAC
 	unsigned char package1 = 0;

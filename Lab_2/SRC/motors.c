@@ -6,6 +6,7 @@
  */
 #include <RBELib/RBELib.h>
 #include <avr/io.h>
+
 /**
  * @brief Helper function to stop the motors on the arm.
  *

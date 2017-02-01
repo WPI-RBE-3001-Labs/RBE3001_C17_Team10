@@ -70,8 +70,13 @@ int main(void) {
 		//sampleADC(60);
 
 		//Part 2
-		outputTriangle(4095);
+		//outputTriangle(4095);
 		//setDAC(3, 400);
+
+		driveLink( 0,  1000);
+		_delay_ms(1000);
+		driveLink( 0,  -1000);
+		_delay_ms(1000);
 
 	}
 	//POT VALUES

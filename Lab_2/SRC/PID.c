@@ -28,35 +28,42 @@ signed int outputLOW = 0;
 signed int outputHIGH = 0;
 
 void setConst(char link, float Kp, float Ki, float Kd) {
-	if (link == 'H') {			//Sets PID constants for higher link
+switch(link){
+	case 'H': //Sets PID constants for higher link
 		pidConsts.Kp_H = Kp;
 		pidConsts.Ki_H = Ki;
 		pidConsts.Kd_H = Kd;
-	} else {   						//Sets PID constants for Lower link
+	break;
+
+	case 'L':
+		//Sets PID constants for Lower link
 		pidConsts.Kp_L = Kp;
 		pidConsts.Ki_L = Ki;
 		pidConsts.Kd_L = Kd;
-	}
+		break;
 }
-
+}
 signed int calcPID(char link, int setPoint, int actPos) {
+	long error = actPos - setPoint;
+
 	if (link == 'H') {
-		errorHIGH = setPoint - actPos; // error calculation
-		dErrHIGH = (errorHIGH - lastErrHIGH) / timePassed;
-		errSumHIGH += pidConsts.Ki_H * errorHIGH; //running sum of the errors multiplied by the Ki constant
+		dErrHIGH = (error - lastErrHIGH) / timePassed;
+		errSumHIGH += pidConsts.Ki_H * error; //running sum of the errors multiplied by the Ki constant
 		outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
-				+ pidConsts.Kp_H * errorHIGH; //Output of calculated PID
-		lastErrHIGH = errorHIGH;  				//things needed for the re-run
+				+ pidConsts.Kp_H * error; //Output of calculated PID
+		lastErrHIGH = error;  				//things needed for the re-run
 		return outputHIGH;
-	} else {
-		errorLOW = setPoint - actPos; // error calculation
-		dErrLOW = (errorLOW - lastErrLOW) / timePassed;
-		errSumLOW += pidConsts.Ki_H * errorLOW; //running sum of the errors multiplied by the Ki constant
+	}
+	else {
+		dErrLOW = (error- lastErrLOW) / timePassed;
+		errSumLOW += pidConsts.Ki_H * error; //running sum of the errors multiplied by the Ki constant
 		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
-				+ pidConsts.Kp_L * errorLOW; //Output of calculated PID
-		lastErrLOW = errorLOW;  				//things needed for the re-run
+				+ pidConsts.Kp_L * error; //Output of calculated PID
+		lastErrLOW = error;  				//things needed for the re-run
 		return outputLOW;
 	}
+
+
 }
 
 ISR(TIMER0_COMPA_vect) {

@@ -53,6 +53,7 @@ void outputTriangle(int peak) {
 void goTo(int setPos) {
 	int actPos = getADC(POTCHAN);
 	int value = calcPID('L', setPos, actPos);
+
 	driveLink('L', value);
 }
 
@@ -68,7 +69,8 @@ int main(void) {
 	initADC(2);
 	initSPI();
 
-	initTimer(0, NORMAL, 0);
+	setConst('L', 5.0, 0, 1);
+	initPIDSampling();
 	while (1) {
 		//printf("%d \n\r", SPDR);
 		//PART 1
@@ -78,7 +80,7 @@ int main(void) {
 		//outputTriangle(4095);
 		//setDAC(3, 400);
 
-		goTo(700);
+		//goTo(700);
 
 		//lab part 3
 

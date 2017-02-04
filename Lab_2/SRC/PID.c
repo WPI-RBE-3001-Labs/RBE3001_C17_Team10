@@ -47,35 +47,41 @@ void setConst(char link, float Kp, float Ki, float Kd) {
 	}
 }
 signed int calcPID(char link, int setPoint, int actPos) {
-	long error = actPos - setPoint;
-
+	float error = actPos - setPoint;
+	//printf("%f \n\r", error);
 	if (link == 'H') {
 		dErrHIGH = (error - lastErrHIGH) / timePassed;
 		errSumHIGH += pidConsts.Ki_H * error; //running sum of the errors multiplied by the Ki constant
 		outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
 				+ pidConsts.Kp_H * error; //Output of calculated PID
-		lastErrHIGH = error;  				//things needed for the re-run
+		lastErrHIGH = error; //things needed for the re-run
 		return outputHIGH;
 	} else {
-		dErrLOW = (error - lastErrLOW) / timePassed;
-		errSumLOW += pidConsts.Ki_H * error; //running sum of the errors multiplied by the Ki constant
-//		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
-		outputLOW = pidConsts.Kp_L * error; //Output of calculated PID
-		lastErrLOW = error;  				//things needed for the re-run
+		//dErrLOW = (error - lastErrLOW) / timePassed;
+		//	printf("%f \n\r", dErrLOW);
+		errSumLOW += pidConsts.Ki_H * error;//running sum of the errors multiplied by the Ki constant
+		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
+				+ pidConsts.Kp_L * error;			//Output of calculated PID
+				//	printf("%f \n\r", outputLOW);
+
 		return outputLOW;
+		lastErrLOW = error;			//things needed for the re-run
 	}
 
 }
-initPIDSampling() {
+
+void initPIDSampling() {
 	maxCount = (F_CPU / 36864) * ((float) 1 / 100);
 	tempCount = 0;
-	initTimer(1, CTC, 36864);
+	initTimer(1, NORMAL, 36864);
 }
 
-ISR( TIMER0_COMPA_vect) {
+ISR( TIMER1_OVF_vect) {
+	printf("we in");
 	if (tempCount >= maxCount) {
+
 		//calculate the pid output for the arm according to the actual position
-		driveLinks('L', calcPID('L', 0, getADC(2)));
+		//driveLink(1, calcPID('L', 0, getADC(2)));
 		tempCount = 0;
 	} else {
 		tempCount++;

@@ -51,6 +51,9 @@ void gotoXY(int x, int y) {
  *
  * @todo Create a way to drive either link in any direction.
  */
+
+//0 is Low link
+//1 is high link
 void driveLink(char link, int value) {
 	if (value > 4095) {
 		value = 4095;
@@ -59,32 +62,37 @@ void driveLink(char link, int value) {
 	}
 
 	switch (link) {
+
+	case 'L':
+		if (value >= 0) {
+			setDAC(0, 0);
+			setDAC(1, -value);
+		} else {
+			setDAC(0, value);
+			setDAC(1, 0);
+		}
+		break;
+
 	case 'H':
 		if (value >= 0) {
 			setDAC(2, value);
 			setDAC(3, 0);
 		} else {
 			setDAC(2, 0);
-			setDAC(3, -value);
+			setDAC(3, value);
 		}
 		break;
-	}
-	case 'L':
-	if (value >= 0) {
-		setDAC(0, value);
-		setDAC(1, 0);
-	} else {
-		setDAC(0, 0);
-		setDAC(1, -value);
-	}
-
-	/**
-	 * @brief Drive the arm to a "home" position using the potentiometers.  This
-	 * should be called before using the encoders and just goes to a default position.
-	 * Once this has been called once, you can initialize/clear the encoders.
-	 *
-	 * @todo Drive the arm to a known position using the potentiometers.
-	 */
-	void homePos() {
 
 	}
+}
+
+/**
+ * @brief Drive the arm to a "home" position using the potentiometers.  This
+ * should be called before using the encoders and just goes to a default position.
+ * Once this has been called once, you can initialize/clear the encoders.
+ *
+ * @todo Drive the arm to a known position using the potentiometers.
+ */
+void homePos() {
+
+}

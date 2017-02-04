@@ -11,7 +11,9 @@ C_SRCS += \
 ../SRC/SPI.c \
 ../SRC/USART.c \
 ../SRC/main.c \
-../SRC/motors.c 
+../SRC/motorCurrentSensor.c \
+../SRC/motors.c \
+../SRC/timer.c 
 
 OBJS += \
 ./SRC/ADC.o \
@@ -21,7 +23,9 @@ OBJS += \
 ./SRC/SPI.o \
 ./SRC/USART.o \
 ./SRC/main.o \
-./SRC/motors.o 
+./SRC/motorCurrentSensor.o \
+./SRC/motors.o \
+./SRC/timer.o 
 
 C_DEPS += \
 ./SRC/ADC.d \
@@ -31,14 +35,16 @@ C_DEPS += \
 ./SRC/SPI.d \
 ./SRC/USART.d \
 ./SRC/main.d \
-./SRC/motors.d 
+./SRC/motorCurrentSensor.d \
+./SRC/motors.d \
+./SRC/timer.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 SRC/%.o: ../SRC/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: AVR Compiler'
-	avr-gcc -I"C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include" -Wall -Os -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega644p -DF_CPU=18432000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
+	avr-gcc -I"C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\include" -Wall -Os -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega644p -DF_CPU=18432000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

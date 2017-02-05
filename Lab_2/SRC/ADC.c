@@ -22,6 +22,12 @@ void initADC(int channel) {
 			(1 << ADPS1) | //Select the ADC prescaler to 128
 			(1 << ADPS0);	//Select the ADC prescaler to 128
 
+	//Bit 7: Reserved
+	//Bit 6: Analog Comparator Multiplexer Enable (ACME) - leave at 1
+	//Bit 5 - 3: Reserved
+	//Bit 2 - 0: Free running mode
+	ADCSRB = 0x40;
+
 }
 
 void clearADC(int channel) {
@@ -50,5 +56,7 @@ unsigned short getADC(int channel) {
 }
 
 void changeADC(int channel) {
+	//Change the channel using the same setting from initADC()
+	ADMUX = (0x40) | channel;
 
 }

@@ -8,11 +8,14 @@
 #include <RBELib/RBELib.h>
 #include <math.h>
 
-#define ABS_MAX_OUTPUT 4095 // As we can't go higher in our DAC
+#define KPPOT 7
+#define KIPOT 6
+#define KDPOT 5
 
 pidConst pidConsts;
 
-int timePassed = 0;
+volatile int timePassed = 1;
+volatile int tempCount = 0;
 
 int errorHIGH = 0;
 float dErrHIGH = 0;
@@ -26,9 +29,6 @@ float lastErrLOW = 0;
 
 float outputLOW = 0;
 float outputHIGH = 0;
-
-int maxCount = 0;
-int tempCount = 0;
 
 void setConst(char link, float Kp, float Ki, float Kd) {
 	switch (link) {
@@ -48,43 +48,47 @@ void setConst(char link, float Kp, float Ki, float Kd) {
 }
 signed int calcPID(char link, int setPoint, int actPos) {
 	float error = actPos - setPoint;
-	//printf("%f \n\r", error);
+//	printf("%f \n\r", error);
 	if (link == 'H') {
-		dErrHIGH = (error - lastErrHIGH) / timePassed;
+		dErrHIGH = (error - lastErrHIGH) / .01;
 		errSumHIGH += pidConsts.Ki_H * error; //running sum of the errors multiplied by the Ki constant
 		outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
 				+ pidConsts.Kp_H * error; //Output of calculated PID
 		lastErrHIGH = error; //things needed for the re-run
 		return outputHIGH;
 	} else {
-		//dErrLOW = (error - lastErrLOW) / timePassed;
+		dErrLOW = (error - lastErrLOW) / .01;
 		//	printf("%f \n\r", dErrLOW);
-		errSumLOW += pidConsts.Ki_H * error;//running sum of the errors multiplied by the Ki constant
-		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
-				+ pidConsts.Kp_L * error;			//Output of calculated PID
-				//	printf("%f \n\r", outputLOW);
 
+		errSumLOW += (.01 * error);
+		//running sum of the errors multiplied by the Ki constant
+
+		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
+				+ pidConsts.Kp_L * error;
+
+		//outputLOW = pidConsts.Kp_L * error;
+		//printf("%f \n\r", outputLOW);
 		return outputLOW;
+
 		lastErrLOW = error;			//things needed for the re-run
 	}
 
 }
+void getConsts() {
+	changeADC(7);
+	//0<Kp<5 ,0<Ki<1 ,0<Kd<0.5
+	float p = (float) getADC(7) * 0.004888;	//0.004887585532746823069403714565;
+	pidConsts.Kp_L = p;
 
-void initPIDSampling() {
-	maxCount = (F_CPU / 36864) * ((float) 1 / 100);
-	tempCount = 0;
-	initTimer(1, NORMAL, 36864);
-}
+	changeADC(6);
+	float i = (float) getADC(6) / 1023;
+	pidConsts.Ki_L = i;
 
-ISR( TIMER1_OVF_vect) {
-	printf("we in");
-	if (tempCount >= maxCount) {
+	changeADC(5);
+	float d = (float) getADC(5) * 0.0004888;// 4.8875855327468230694037145650049e-4;
+	pidConsts.Kd_L = d;
 
-		//calculate the pid output for the arm according to the actual position
-		//driveLink(1, calcPID('L', 0, getADC(2)));
-		tempCount = 0;
-	} else {
-		tempCount++;
-	}
+	changeADC(2);
+
 }
 

@@ -66,9 +66,9 @@ void driveLink(char link, int value) {
 	case 'L':
 		if (value >= 0) {
 			setDAC(0, 0);
-			setDAC(1, -value);
+			setDAC(1, value);
 		} else {
-			setDAC(0, value);
+			setDAC(0, -value);
 			setDAC(1, 0);
 		}
 		break;

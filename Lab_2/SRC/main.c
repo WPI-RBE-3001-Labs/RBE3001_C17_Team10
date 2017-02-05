@@ -14,7 +14,9 @@
 #define CURRSENSOR 0
 #define HIGHLINK 3
 int timestamp = 0;
-int count = 0;
+volatile int count = 0;
+
+volatile int printFlag = 0;
 
 //value to get 100Hz
 int maxCount = 45;
@@ -29,7 +31,7 @@ void printHighPotVal(int potVal) {
 	unsigned int mV = potVal * 4.88758;		//in millivolts
 
 	//300/1023
-	unsigned int angle = (potVal * .26) - 85;		//in degrees
+	unsigned int angle = ((potVal * .26) - 85) + 90;		//in degrees
 ////293255132
 	printf("%d %d %d \n\r", potVal, mV, angle);
 }
@@ -95,8 +97,7 @@ void goToHighLink(int setPos) {
 	driveLink('H', value);
 }
 void buttonGoTo() {
-//set up buttons for use
-	DDRC |= (1 >> PIN7) | (1 >> PIN6) | (1 >> PIN5) | (1 >> PIN4);
+
 	if (!PINCbits._P7) {
 		goToLowLink(0);
 		armState = 0;
@@ -146,6 +147,7 @@ void printArmData() {
 
 	printf("%s %d %d %f \n\r", armState, angle, mV, curr);
 }
+
 int main(void) {
 //Enable printf() and setServo()
 	initRBELib();
@@ -164,8 +166,14 @@ int main(void) {
 //	initADC(6);
 //initADC(KDPOT);
 //changeADC(0);
+
+	//set up buttons for use
+	DDRC &= 0x0F;
+
 	initSPI();
-//initTimer(0, NORMAL, 0);
+
+	initTimer(0, NORMAL, 0);
+	printf("a");
 //.33,0,0.00001
 //setConst('L', 70, 0, 2);
 //setConst('L', .33, 0, 0);
@@ -188,24 +196,32 @@ int main(void) {
 		//printf("%f \n\r", pidConsts.Kp_L);
 		//goTo(45);
 
-//		buttonGoTo();
-//		printArmData();
-		//	printf("%d \n\r", PINCbits._P6);
-		//readPotVal();
-//		if (count >= 45) {
-//			//printf("here");
-//			//putCharDebug('a');
-//			getConsts();
-//			count = 0;
+		buttonGoTo();
+//		if (printFlag) {
+//			printf("a");
+//			//printArmData();
+//			printFlag = 0;
 //
 //		}
-		goToLowLink(85);
+		//printArmData();
+		//	printf("%d \n\r", PINCbits._P6);
+		//readPotVal();
+		//printf("aa");
+		if (count >= 45) {
+			printf("here");
+			//putCharDebug('a');
+//			getConsts();
+			count = 0;
+
+		}
+		//goToLowLink(85);
 		//	printLowPotVal(getADC(LOWLINK));
 		//LAB 2B
 		//Part 4
-		goToHighLink(30);
+		//goToHighLink(30);
 		//printHighPotVal(getADC(HIGHLINK));
-//		printf("%d \n\r", getADC(HIGHLINK));
+		//printf("%d \n\r", getADC(LOWLINK));
+		//printXY();
 	}
 	return 0;
 }
@@ -214,9 +230,16 @@ int main(void) {
 //340 = 0 deg
 
 //}
-//ISR(TIMER0_OVF_vect) {
-//	count++;
-//	//printf("%d \n\r", count);
-//
-//}
+ISR(TIMER1_OVF_vect) {
+//	if (!printFlag) {
+//		count++;
+//	}
+//	printf("%d, %d \n\r", count, printFlag);
+//	if (count > 45) {
+//		printFlag = 1;
+//		count = 0;
+//	}
+	//printf("%d \n\r", count);
+	count++;
+}
 

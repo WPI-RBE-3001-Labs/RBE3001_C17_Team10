@@ -10,6 +10,7 @@ C_SRCS += \
 ../SRC/Ports.c \
 ../SRC/SPI.c \
 ../SRC/USART.c \
+../SRC/forwardKinematics.c \
 ../SRC/main.c \
 ../SRC/motorCurrentSensor.c \
 ../SRC/motors.c \
@@ -22,6 +23,7 @@ OBJS += \
 ./SRC/Ports.o \
 ./SRC/SPI.o \
 ./SRC/USART.o \
+./SRC/forwardKinematics.o \
 ./SRC/main.o \
 ./SRC/motorCurrentSensor.o \
 ./SRC/motors.o \
@@ -34,6 +36,7 @@ C_DEPS += \
 ./SRC/Ports.d \
 ./SRC/SPI.d \
 ./SRC/USART.d \
+./SRC/forwardKinematics.d \
 ./SRC/main.d \
 ./SRC/motorCurrentSensor.d \
 ./SRC/motors.d \

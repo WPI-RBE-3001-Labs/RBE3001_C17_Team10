@@ -79,7 +79,7 @@ void driveLink(char link, int value) {
 			setDAC(3, 0);
 		} else {
 			setDAC(2, 0);
-			setDAC(3, value);
+			setDAC(3, -value);
 		}
 		break;
 

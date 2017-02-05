@@ -46,34 +46,57 @@ void setConst(char link, float Kp, float Ki, float Kd) {
 		break;
 	}
 }
-signed int calcPID(char link, int setPoint, int actPos) {
+//signed int calcPID(char link, int setPoint, int actPos) {
+//	float error = actPos - setPoint;
+//
+//	if (link == 'H') {
+//
+//		dErrHIGH = (error - lastErrHIGH) / .01;
+//		errSumHIGH += pidConsts.Ki_H * error; //running sum of the errors multiplied by the Ki constant
+//		outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
+//				+ pidConsts.Kp_H * error; //Output of calculated PID
+//
+//		return outputHIGH;
+//		lastErrHIGH = error; //things needed for the re-run
+//
+//	} else {
+//
+//		dErrLOW = (error - lastErrLOW) / .01;
+//		errSumLOW += (.01 * error); //running sum of the errors multiplied by the Ki constant
+//		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
+//				+ pidConsts.Kp_L * error; //outputLOW = pidConsts.Kp_L * error;
+//
+//		return outputLOW;
+//		lastErrLOW = error;			//things needed for the re-run
+//	}
+//
+//}
+
+signed int calcHighPID(int setPoint, int actPos) {
 	float error = actPos - setPoint;
-//	printf("%f \n\r", error);
-	if (link == 'H') {
-		dErrHIGH = (error - lastErrHIGH) / .01;
-		errSumHIGH += pidConsts.Ki_H * error; //running sum of the errors multiplied by the Ki constant
-		outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
-				+ pidConsts.Kp_H * error; //Output of calculated PID
-		lastErrHIGH = error; //things needed for the re-run
-		return outputHIGH;
-	} else {
-		dErrLOW = (error - lastErrLOW) / .01;
-		//	printf("%f \n\r", dErrLOW);
 
-		errSumLOW += (.01 * error);
-		//running sum of the errors multiplied by the Ki constant
-
-		outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
-				+ pidConsts.Kp_L * error;
-
-		//outputLOW = pidConsts.Kp_L * error;
-		//printf("%f \n\r", outputLOW);
-		return outputLOW;
-
-		lastErrLOW = error;			//things needed for the re-run
-	}
+	dErrHIGH = (error - lastErrHIGH) / .01;
+	errSumHIGH += pidConsts.Ki_H * error; //running sum of the errors multiplied by the Ki constant
+	outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
+			+ pidConsts.Kp_H * error; //Output of calculated PID
+	lastErrHIGH = error; //things needed for the re-run
+	printf("%d \n\r", outputHIGH);
+	return outputHIGH;
 
 }
+
+signed int calcLowPID(int setPoint, int actPos) {
+	float error = actPos - setPoint;
+
+	dErrLOW = (error - lastErrLOW) / .01;
+	errSumLOW += (.01 * error); //running sum of the errors multiplied by the Ki constant
+	outputLOW = pidConsts.Ki_L * errSumLOW + pidConsts.Kd_L * dErrLOW
+			+ pidConsts.Kp_L * error; //outputLOW = pidConsts.Kp_L * error;
+	lastErrLOW = error;			//things needed for the re-run
+	return outputLOW;
+
+}
+
 void getConsts() {
 	changeADC(7);
 	//0<Kp<5 ,0<Ki<1 ,0<Kd<0.5

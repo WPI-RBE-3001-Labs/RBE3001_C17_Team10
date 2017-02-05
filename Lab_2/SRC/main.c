@@ -9,9 +9,10 @@
 #include <stdlib.h>
 #include <avr/io.h>
 #include <RBELib/ADC.h>
+
 #define LOWLINK 2
 #define CURRSENSOR 0
-
+#define HIGHLINK 3
 int timestamp = 0;
 int count = 0;
 
@@ -19,15 +20,26 @@ int count = 0;
 int maxCount = 45;
 int armState = 0;
 
-int lowLinkAngle(int angle) {
-	return (angle + 75) / .23;
+int linkAngle(int angle) {
+	return (angle + 85) / .26;
 }
-void printPotVal(int potVal) {
+
+void printHighPotVal(int potVal) {
 	//5000/1023
 	unsigned int mV = potVal * 4.88758;		//in millivolts
 
 	//300/1023
-	unsigned int angle = (potVal * .23) - 75;		//in degrees
+	unsigned int angle = (potVal * .26) - 85;		//in degrees
+////293255132
+	printf("%d %d %d \n\r", potVal, mV, angle);
+}
+
+void printLowPotVal(int potVal) {
+	//5000/1023
+	unsigned int mV = potVal * 4.88758;		//in millivolts
+
+	//300/1023
+	unsigned int angle = (potVal * .26) - 85;		//in degrees
 //293255132
 	printf("%d %d %d \n\r", potVal, mV, angle);
 }
@@ -35,7 +47,7 @@ void printPotVal(int potVal) {
 void readPotVal() {
 	int val = getADC(LOWLINK);
 	clearADC(LOWLINK);
-	printPotVal(val);
+	printLowPotVal(val);
 }
 
 void sampleADC(int seconds) {
@@ -59,32 +71,47 @@ void outputTriangle(int peak) {
 
 	}
 }
-void goTo(int setPos) {
-	int potVal = lowLinkAngle(setPos);
-	//changeADC(LOWLINK);
+void goToLowLink(int setPos) {
+	int potVal = linkAngle(setPos);
+
+	changeADC(LOWLINK);
+
 	int actPos = getADC(LOWLINK);
-	int value = calcPID('L', potVal, actPos);
+
+	int value = calcLowPID(potVal, actPos);
 
 	driveLink('L', value);
+}
+
+void goToHighLink(int setPos) {
+	int potVal = linkAngle(setPos);
+
+	changeADC(HIGHLINK);
+
+	int actPos = getADC(HIGHLINK);
+
+	int value = calcHighPID(potVal, actPos);
+
+	driveLink('H', value);
 }
 void buttonGoTo() {
 //set up buttons for use
 	DDRC |= (1 >> PIN7) | (1 >> PIN6) | (1 >> PIN5) | (1 >> PIN4);
 	if (!PINCbits._P7) {
-		goTo(0);
+		goToLowLink(0);
 		armState = 0;
 	} else if (!PINCbits._P6) {
-		goTo(30);
+		goToLowLink(30);
 		armState = 30;
 
 	} else if (!PINCbits._P5) {
-		goTo(60);
+		goToLowLink(60);
 		armState = 60;
 	} else if (!PINCbits._P4) {
-		goTo(90);
+		goToLowLink(90);
 		armState = 90;
 	} else {
-		goTo(0);
+		goToLowLink(0);
 		armState = 0;
 	}
 //	}
@@ -132,6 +159,7 @@ int main(void) {
 //Initialize all the ADC channels we need
 //initADC(CURRSENSOR);
 	initADC(LOWLINK);
+	initADC(HIGHLINK);
 //	initADC(7);
 //	initADC(6);
 //initADC(KDPOT);
@@ -142,7 +170,7 @@ int main(void) {
 //setConst('L', 70, 0, 2);
 //setConst('L', .33, 0, 0);
 	setConst('L', 40, .5, .005);
-	goTo(90);
+	setConst('H', 40, 0, 0);
 
 	while (1) {
 		//	calcCurrent(getADC(0));
@@ -160,8 +188,8 @@ int main(void) {
 		//printf("%f \n\r", pidConsts.Kp_L);
 		//goTo(45);
 
-		buttonGoTo();
-		printArmData();
+//		buttonGoTo();
+//		printArmData();
 		//	printf("%d \n\r", PINCbits._P6);
 		//readPotVal();
 //		if (count >= 45) {
@@ -171,6 +199,13 @@ int main(void) {
 //			count = 0;
 //
 //		}
+		goToLowLink(85);
+		//	printLowPotVal(getADC(LOWLINK));
+		//LAB 2B
+		//Part 4
+		goToHighLink(30);
+		//printHighPotVal(getADC(HIGHLINK));
+//		printf("%d \n\r", getADC(HIGHLINK));
 	}
 	return 0;
 }

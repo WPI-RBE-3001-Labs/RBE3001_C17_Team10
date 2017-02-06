@@ -11,8 +11,9 @@
 #include <RBELib/ADC.h>
 
 #define LOWLINK 2
-#define CURRSENSOR 0
 #define HIGHLINK 3
+#define CURRSENSOR 0
+
 int timestamp = 0;
 volatile int count = 0;
 
@@ -148,6 +149,27 @@ void printArmData() {
 	printf("%s %d %d %f \n\r", armState, angle, mV, curr);
 }
 
+void buttonGoToXY() {
+
+	if (!PINCbits._P7) {
+		goToLowLink(90);
+		goToHighLink(10);
+	} else if (!PINCbits._P6) {
+		goToLowLink(10);
+		goToHighLink(170);
+	} else if (!PINCbits._P5) {
+		goToLowLink(30);
+		goToHighLink(90);
+	} else if (!PINCbits._P4) {
+		goToLowLink(50);
+		goToHighLink(70);
+	} else {
+		goToLowLink(45);
+		goToHighLink(10);
+
+	}
+}
+
 int main(void) {
 //Enable printf() and setServo()
 	initRBELib();
@@ -160,7 +182,7 @@ int main(void) {
 //DDRC |= (1 >> PIN7) | (1 >> PIN6) | (1 >> PIN5) | (1 >> PIN4);
 //Initialize all the ADC channels we need
 //initADC(CURRSENSOR);
-	initADC(LOWLINK);
+	//initADC(LOWLINK);
 	initADC(HIGHLINK);
 //	initADC(7);
 //	initADC(6);
@@ -172,8 +194,8 @@ int main(void) {
 
 	initSPI();
 
-	initTimer(0, NORMAL, 0);
-	printf("a");
+	//initTimer(0, NORMAL, 0);
+	//printf("a");
 //.33,0,0.00001
 //setConst('L', 70, 0, 2);
 //setConst('L', .33, 0, 0);
@@ -196,7 +218,7 @@ int main(void) {
 		//printf("%f \n\r", pidConsts.Kp_L);
 		//goTo(45);
 
-		buttonGoTo();
+		buttonGoToXY();
 //		if (printFlag) {
 //			printf("a");
 //			//printArmData();
@@ -207,18 +229,13 @@ int main(void) {
 		//	printf("%d \n\r", PINCbits._P6);
 		//readPotVal();
 		//printf("aa");
-		if (count >= 45) {
-			printf("here");
-			//putCharDebug('a');
-//			getConsts();
-			count = 0;
 
-		}
 		//goToLowLink(85);
 		//	printLowPotVal(getADC(LOWLINK));
 		//LAB 2B
 		//Part 4
-		//goToHighLink(30);
+		printf("%d \n\r", getADC(HIGHLINK));
+		//goToHighLink(160);
 		//printHighPotVal(getADC(HIGHLINK));
 		//printf("%d \n\r", getADC(LOWLINK));
 		//printXY();
@@ -230,16 +247,5 @@ int main(void) {
 //340 = 0 deg
 
 //}
-ISR(TIMER1_OVF_vect) {
-//	if (!printFlag) {
-//		count++;
-//	}
-//	printf("%d, %d \n\r", count, printFlag);
-//	if (count > 45) {
-//		printFlag = 1;
-//		count = 0;
-//	}
-	//printf("%d \n\r", count);
-	count++;
-}
+
 

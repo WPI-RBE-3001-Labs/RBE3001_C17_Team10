@@ -80,7 +80,7 @@ signed int calcHighPID(int setPoint, int actPos) {
 	outputHIGH = pidConsts.Ki_H * errSumHIGH + pidConsts.Kd_H * dErrHIGH
 			+ pidConsts.Kp_H * error; //Output of calculated PID
 	lastErrHIGH = error; //things needed for the re-run
-	printf("%d \n\r", outputHIGH);
+	//printf("%d \n\r", outputHIGH);
 	return outputHIGH;
 
 }

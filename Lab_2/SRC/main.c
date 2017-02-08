@@ -155,17 +155,14 @@ void printArmData() {
 void buttonGoToXY() {
 
 	if (!PINCbits._P7) {
-		goToLowLink(90);
-		goToHighLink(10);
+		goToBothLinks(0, 90);
 	} else if (!PINCbits._P6) {
-		goToLowLink(10);
-		goToHighLink(170);
+		goToBothLinks(45, 0);
 	} else if (!PINCbits._P5) {
-		goToLowLink(30);
-		goToHighLink(90);
+		goToBothLinks(45, 90);
 	} else if (!PINCbits._P4) {
-		goToLowLink(50);
-		goToHighLink(70);
+		goToLowLink(20);
+		goToHighLink(45);
 	} else {
 		goToLowLink(45);
 		goToHighLink(10);
@@ -219,7 +216,7 @@ void makeTriangle() {
 	} else if (nextLine == 4) {
 		stopMotors();
 	}
-	printf("%d %d \n\r", angle1Deg, angle2Deg);
+	//printf("%d %d \n\r", angle1Deg, angle2Deg);
 }
 int main(void) {
 //Enable printf() and setServo()
@@ -290,14 +287,16 @@ int main(void) {
 		//printf("%d \n\r", getADC(LOWLINK));
 
 		//Lab 2B Part 5
-		//buttonGoToXY();
-		//printXY();
+		buttonGoToXY();
+		printXY();
 
 		//Lab 2B Part 6
 		//goToLowLink(90);
-		makeTriangle();
+		//makeTriangle();
+
 		//goToBothLinks(30, 160);
 //		goToHighLink(45);
+
 	}
 	return 0;
 }

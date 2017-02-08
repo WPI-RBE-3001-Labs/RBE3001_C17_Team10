@@ -9,18 +9,25 @@
 float x = 0;
 float y = 0;
 float degToRad(int degree) {
-	return (degree * (3.14159 / 180));
+	return ((float) degree * (2 * M_PI / 360));
 }
 void printXY() {
 	changeADC(2);
-	float angle1 = degToRad((getADC(2) * .26) - 85);
+
+	int angle1Deg = (getADC(2) * .26) - 85;
+	float angle1 = degToRad(angle1Deg);
 
 	changeADC(3);
-	float angle2 = degToRad(((getADC(3) * .26) - 85) - 90);
 
-	x = 25 * cos(angle1) + 22 * cos(angle1 + angle2);
-	y = 25 * sin(angle1) + 22 * sin(angle1 + angle2) + 19;	//mm
+	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
+	float angle2 = degToRad(angle2Deg);
 
-	printf("%f %f \n\r", x, y);
+	x = (15 * cos(angle1)) + (12 * cos(angle1 + angle2));
+	y = 13 + (15 * sin(angle1)) + (12 * sin(angle1 + angle2));	//cm
+
+	//printf("%f %f \n\r", angle1, angle2);
+
+	printf("%d %d %f %f \n\r", angle1Deg, angle2Deg, x, y);
+	//printf("%f %f \n\r", x, y);
 }
 

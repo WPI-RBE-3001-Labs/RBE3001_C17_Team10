@@ -23,6 +23,9 @@ volatile int printFlag = 0;
 int maxCount = 45;
 int armState = 0;
 
+//next line for triangle
+int nextLine = 0;
+
 int linkAngle(int angle) {
 	return (angle + 85) / .26;
 }
@@ -169,7 +172,55 @@ void buttonGoToXY() {
 
 	}
 }
+void goToBothLinks(int theta1, int theta2) {
+	if (theta1 > 90) {
+		theta1 = 90;
+	} else if (theta1 < 0) {
+		theta1 = 0;
+	}
+	if (theta2 > 180) {
+		theta2 = 180;
+	} else if (theta2 < 0) {
+		theta2 = 0;
+	}
 
+	goToLowLink(theta1);
+	goToHighLink(theta2);
+
+}
+void makeTriangle() {
+	changeADC(2);
+
+	int angle1Deg = (getADC(2) * .26) - 85;
+
+	changeADC(3);
+
+	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
+
+	if (nextLine == 0) {
+		goToBothLinks(0, 90);
+		if ((angle1Deg <= 5 && angle1Deg >= -5)
+				&& (angle2Deg <= 5 && angle2Deg >= -5))
+			nextLine = 1;
+	} else if (nextLine == 1) {
+		goToBothLinks(45, 0);
+		if ((angle1Deg <= 50 && angle1Deg >= 40) && (angle2Deg <= 5))
+			nextLine = 2;
+	} else if (nextLine == 2) {
+		goToBothLinks(45, 90);
+		if ((angle1Deg <= 50 && angle1Deg >= 40)
+				&& (angle2Deg <= 5 && angle2Deg >= -5))
+			nextLine = 3;
+	} else if (nextLine == 3) {
+		goToBothLinks(0, 90);
+		if ((angle1Deg <= 5 && angle1Deg >= -5)
+				&& (angle2Deg <= 95 && angle2Deg >= 85))
+			nextLine = 4;
+	} else if (nextLine == 4) {
+		stopMotors();
+	}
+	printf("%d %d \n\r", angle1Deg, angle2Deg);
+}
 int main(void) {
 //Enable printf() and setServo()
 	initRBELib();
@@ -182,20 +233,20 @@ int main(void) {
 //DDRC |= (1 >> PIN7) | (1 >> PIN6) | (1 >> PIN5) | (1 >> PIN4);
 //Initialize all the ADC channels we need
 //initADC(CURRSENSOR);
-	//initADC(LOWLINK);
+//initADC(LOWLINK);
 	initADC(HIGHLINK);
 //	initADC(7);
 //	initADC(6);
 //initADC(KDPOT);
 //changeADC(0);
 
-	//set up buttons for use
+//set up buttons for use
 	DDRC &= 0x0F;
 
 	initSPI();
 
-	//initTimer(0, NORMAL, 0);
-	//printf("a");
+//initTimer(0, NORMAL, 0);
+//printf("Low Theta", "High Theta", "X", "Y");
 //.33,0,0.00001
 //setConst('L', 70, 0, 2);
 //setConst('L', .33, 0, 0);
@@ -218,7 +269,6 @@ int main(void) {
 		//printf("%f \n\r", pidConsts.Kp_L);
 		//goTo(45);
 
-		buttonGoToXY();
 //		if (printFlag) {
 //			printf("a");
 //			//printArmData();
@@ -234,11 +284,20 @@ int main(void) {
 		//	printLowPotVal(getADC(LOWLINK));
 		//LAB 2B
 		//Part 4
-		printf("%d \n\r", getADC(HIGHLINK));
+		//printf("%d \n\r", getADC(HIGHLINK));
 		//goToHighLink(160);
 		//printHighPotVal(getADC(HIGHLINK));
 		//printf("%d \n\r", getADC(LOWLINK));
+
+		//Lab 2B Part 5
+		//buttonGoToXY();
 		//printXY();
+
+		//Lab 2B Part 6
+		//goToLowLink(90);
+		makeTriangle();
+		//goToBothLinks(30, 160);
+//		goToHighLink(45);
 	}
 	return 0;
 }
@@ -247,5 +306,4 @@ int main(void) {
 //340 = 0 deg
 
 //}
-
 

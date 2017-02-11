@@ -7,9 +7,11 @@ C_SRCS += \
 ../SRC/ADC.c \
 ../SRC/DAC.c \
 ../SRC/PID.c \
+../SRC/Periph.c \
 ../SRC/Ports.c \
 ../SRC/SPI.c \
 ../SRC/USART.c \
+../SRC/accelerometerAndEncoder.c \
 ../SRC/forwardKinematics.c \
 ../SRC/main.c \
 ../SRC/motorCurrentSensor.c \
@@ -20,9 +22,11 @@ OBJS += \
 ./SRC/ADC.o \
 ./SRC/DAC.o \
 ./SRC/PID.o \
+./SRC/Periph.o \
 ./SRC/Ports.o \
 ./SRC/SPI.o \
 ./SRC/USART.o \
+./SRC/accelerometerAndEncoder.o \
 ./SRC/forwardKinematics.o \
 ./SRC/main.o \
 ./SRC/motorCurrentSensor.o \
@@ -33,9 +37,11 @@ C_DEPS += \
 ./SRC/ADC.d \
 ./SRC/DAC.d \
 ./SRC/PID.d \
+./SRC/Periph.d \
 ./SRC/Ports.d \
 ./SRC/SPI.d \
 ./SRC/USART.d \
+./SRC/accelerometerAndEncoder.d \
 ./SRC/forwardKinematics.d \
 ./SRC/main.d \
 ./SRC/motorCurrentSensor.d \

@@ -6,12 +6,22 @@
  */
 #include <RBELib/RBELib.h>
 #include <avr/io.h>
+#include <math.h>
 
 /**
  * @brief Helper function to stop the motors on the arm.
  *
  * @todo Create way to stop the motors using the DAC.
  */
+//
+//double link1 = 15;
+//double link2 = 12;
+//double angle1 = 0;
+//double angle2 = 0;
+//float x = 0;
+//float y = 0;
+
+
 void stopMotors() {
 	setDAC(0, 0);
 	setDAC(1, 0);
@@ -27,9 +37,12 @@ void stopMotors() {
  *
  * @todo Make a way to drive the links to a desired angle.
  */
-void gotoAngles(int lowerTheta, int upperTheta) {
-
-}
+//void gotoAngles(int lowerTheta, int upperTheta) {
+//
+//	x = (15 * cos(lowerTheta)) + (12 * cos(lowerTheta + upperTheta));
+//	y = 13 + (15 * sin(lowerTheta)) + (12 * sin(lowerTheta + upperTheta));
+//
+//}
 
 /**
  * @brief Drive the end effector of the arm to a desired X and Y position in the workspace.
@@ -39,9 +52,13 @@ void gotoAngles(int lowerTheta, int upperTheta) {
  *
  * @todo Use kinematic equations to move the end effector to the desired position.
  */
-void gotoXY(int x, int y) {
-
-}
+//void gotoXY(int x, int y) {
+//
+//	angle2= atan2((+-sqrt(1-((x^2)+(y^2)-(link1^2)-(link2^2)^2)/(2*link1*link2))),((x^2)+(y^2)-(link1^2)+(link2^2))/(2*link1*link2));
+//
+//	angle1= atan2(y,x) - atan2((link2*sin(angle2)),(link1 + (link2 * cos(angle2))));
+//
+//}
 
 /**
  * @brief Drive a link (upper or lower) in a desired direction.

@@ -17,7 +17,7 @@
 int timestamp = 0;
 volatile int count = 0;
 
-volatile int printFlag = 0;
+volatile int sampleFlag = 0;
 
 //value to get 100Hz
 int maxCount = 45;
@@ -218,90 +218,56 @@ void makeTriangle() {
 	}
 	//printf("%d %d \n\r", angle1Deg, angle2Deg);
 }
+
+void buttonSetVoltage() {
+	if (!PINBbits._P0) {
+
+		driveLink('L', 0);
+
+	} else if (!PINBbits._P1) {
+		driveLink('L', 1024);
+	} else if (!PINBbits._P2) {
+		driveLink('L', -2048);
+	} else if (!PINBbits._P3) {
+		driveLink('L', 4095);
+	} else {
+		resetEncCount(0);
+		driveLink('L', 0);
+	}
+}
+
 int main(void) {
 //Enable printf() and setServo()
 	initRBELib();
-	printf("A");
-// Write the USARTDebug.c file using the function prototypes in the H file to enable the usart
-//Set the baud rate of the UART
+	//setup buttons as inputs
+//	DDRB &= ~((1 << PIN3) | (1 << PIN2) | (1 << PIN1) | (1 << PIN0));
+	DDRA |= (1 << PIN4);
+
 	debugUSARTInit(115200);
-	//initTimer(0, NORMAL, 0);
-
-//	printf("ADC-COUNT VOLTAGE ARM-ANGLE \n\r");
-//DDRC |= (1 >> PIN7) | (1 >> PIN6) | (1 >> PIN5) | (1 >> PIN4);
-//Initialize all the ADC channels we need
-//initADC(CURRSENSOR);
-//initADC(LOWLINK);
-	initADC(HIGHLINK);
-//	initADC(7);
-//	initADC(6);
-//initADC(KDPOT);
-//changeADC(0);
-
-//set up buttons for use
-	DDRC &= 0x0F;
-
 	initSPI();
+	initTimer(0, NORMAL, 0);
 
-//printf("Low Theta", "High Theta", "X", "Y");
-//.33,0,0.00001
-//setConst('L', 70, 0, 2);
-//setConst('L', .33, 0, 0);
-	setConst('L', 40, .5, .005);
-	setConst('H', 40, 0, 0);
+	//printf("Encoder Counts\n\r");
+
+	//encInit(0);
+
 
 	while (1) {
-		//	calcCurrent(getADC(0));
-
-		//PART 1
-		//sampleADC(60);
-
-		//Part 2
-		//outputTriangle(4095);
-
-		//lab part 7
-		//part7();
-		//	driveLink('L', -3000);
-		//changeADC(LOWLINK);
-		//printf("%f \n\r", pidConsts.Kp_L);
-		//goTo(45);
-		//goToLowLink(45);
-//		buttonGoTo();
-		//	goToBothLinks(30, 90);
-//		if (printFlag) {
-//			//printf("a");
-//			printArmData();
-//			printFlag = 0;
-//
+//		printf("while \n\r");
+	//	buttonSetVoltage();
+		//driveLink('L', 2048);
+		//printf("%d", sampleFlag);
+//		if (sampleFlag) {
+//			//printf("here");
+//			printf("%ld \n\r", encCount(0));
+//			sampleFlag = 0;
 //		}
-		//printArmData();
-		//	printf("%d \n\r", PINCbits._P6);
-		//readPotVal();
-		//printf("aa");
-
-		//goToLowLink(85);
-		//	printLowPotVal(getADC(LOWLINK));
-		//LAB 2B
-		//Part 4
-		//printf("%d \n\r", getADC(HIGHLINK));
-		//goToHighLink(160);
-		//printHighPotVal(getADC(HIGHLINK));
-		//printf("%d \n\r", getADC(LOWLINK));
-
-		//Lab 2B Part 5
-		//buttonGoToXY();
-		//printXY();
-
-		//Lab 2B Part 6
-		//goToLowLink(90);
-		makeTriangle();
-
-		//goToBothLinks(30, 160);
-//		goToHighLink(45);
-
+		printf("%d\n\r", getAccel(2));
 	}
 	return 0;
+
 }
+
 //POT VALUES
 //720 = 90 deg
 //340 = 0 deg
@@ -310,8 +276,18 @@ int main(void) {
 
 ISR(TIMER0_OVF_vect) {
 	count++;
-	if (count > maxCount) {
-		printFlag = 1;
+
+	if (count >= maxCount) {
+		//printf("in");
+		sampleFlag = 1;
 		count = 0;
 	}
+
+//	if (count > maxCount) {
+//		sampleFlag = 1;
+//
+//		PINAbits._P7 = 1
+//
+//		count = 0;
+//	}
 }

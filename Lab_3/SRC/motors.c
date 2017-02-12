@@ -20,8 +20,6 @@
 //double angle2 = 0;
 //float x = 0;
 //float y = 0;
-
-
 void stopMotors() {
 	setDAC(0, 0);
 	setDAC(1, 0);
@@ -43,7 +41,6 @@ void stopMotors() {
 //	y = 13 + (15 * sin(lowerTheta)) + (12 * sin(lowerTheta + upperTheta));
 //
 //}
-
 /**
  * @brief Drive the end effector of the arm to a desired X and Y position in the workspace.
  *
@@ -59,7 +56,6 @@ void stopMotors() {
 //	angle1= atan2(y,x) - atan2((link2*sin(angle2)),(link1 + (link2 * cos(angle2))));
 //
 //}
-
 /**
  * @brief Drive a link (upper or lower) in a desired direction.
  *
@@ -84,9 +80,13 @@ void driveLink(char link, int value) {
 		if (value >= 0) {
 			setDAC(0, 0);
 			setDAC(1, value);
+			setDAC(2, 0);
+			setDAC(3, 0);
 		} else {
 			setDAC(0, -value);
 			setDAC(1, 0);
+			setDAC(2, 0);
+			setDAC(3, 0);
 		}
 		break;
 

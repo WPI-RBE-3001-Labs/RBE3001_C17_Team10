@@ -14,6 +14,8 @@
 #define HIGHLINK 3
 #define CURRSENSOR 0
 
+#define AXIS 2
+
 int timestamp = 0;
 volatile int count = 0;
 
@@ -251,10 +253,9 @@ int main(void) {
 
 	//encInit(0);
 
-
 	while (1) {
 //		printf("while \n\r");
-	//	buttonSetVoltage();
+		//	buttonSetVoltage();
 		//driveLink('L', 2048);
 		//printf("%d", sampleFlag);
 //		if (sampleFlag) {
@@ -262,7 +263,11 @@ int main(void) {
 //			printf("%ld \n\r", encCount(0));
 //			sampleFlag = 0;
 //		}
-		printf("%d\n\r", getAccel(2));
+		printf("Axis Acceleration: %d \n\r", getAccel(AXIS));
+		convertAccelmV(getAccel(AXIS));
+		convertAccelGforce(getAccel(AXIS));
+//		printf("%f \n\r", convertAccelmV(getAccel(2)));
+////				convertAccelGforce(getAccel(2)));
 	}
 	return 0;
 

@@ -19,6 +19,7 @@
 int timestamp = 0;
 volatile int count = 0;
 
+int homeFlag = 0;
 volatile int sampleFlag = 0;
 
 //value to get 100Hz
@@ -44,12 +45,12 @@ void printHighPotVal(int potVal) {
 
 void printLowPotVal(int potVal) {
 	//5000/1023
-	unsigned int mV = potVal * 4.88758;		//in millivolts
+	//unsigned int mV = potVal * 4.88758;		//in millivolts
 
 	//300/1023
 	unsigned int angle = (potVal * .26) - 85;		//in degrees
 //293255132
-	printf("%d %d %d \n\r", potVal, mV, angle);
+	printf("Arm Angle: %d \n\r", angle);
 }
 
 void readPotVal() {
@@ -238,34 +239,60 @@ void buttonSetVoltage() {
 	}
 }
 
+void streamArmData() {
+	if (!PINBbits._P0)
+		goToLowLink(85);
+	else {
+		goToLowLink(0);
+		resetEncCount(0);
+	}
+}
+void pollHomeButton() {
+	if (!PINBbits._P1) {
+		homeFlag = 1;
+		resetEncCount(0);
+	} else
+		homeFlag = 0;
+}
+
 int main(void) {
-//Enable printf() and setServo()
+	//Enable printf() and setServo()
 	initRBELib();
+
 	//setup buttons as inputs
-//	DDRB &= ~((1 << PIN3) | (1 << PIN2) | (1 << PIN1) | (1 << PIN0));
+	DDRB &= ~((1 << PIN0) | (1 << PIN1));
 	DDRA |= (1 << PIN4);
 
 	debugUSARTInit(115200);
 	initSPI();
+
 	initTimer(0, NORMAL, 0);
 
 	//printf("Encoder Counts\n\r");
 
-	//encInit(0);
+	encInit(0);
+	initADC(LOWLINK);
+	setConst('L', 40, .5, .005);
 
 	while (1) {
 //		printf("while \n\r");
 		//	buttonSetVoltage();
 		//driveLink('L', 2048);
 		//printf("%d", sampleFlag);
-//		if (sampleFlag) {
-//			//printf("here");
-//			printf("%ld \n\r", encCount(0));
-//			sampleFlag = 0;
-//		}
-		printf("Axis Acceleration: %d \n\r", getAccel(AXIS));
-		convertAccelmV(getAccel(AXIS));
-		convertAccelGforce(getAccel(AXIS));
+		//driveLink('L', 4095);
+		pollHomeButton();
+		streamArmData();
+
+		if (sampleFlag) {
+			printLowPotVal(getADC(LOWLINK));
+			printf("Encoder Counts: %d \n\r", encCount(0));
+			printf("X Axis Acceleration: %d \n\r", getAccel(0));
+			printf("Y Axis Acceleration: %d \n\r", getAccel(1));
+			printf("Z Axis Acceleration: %d \n\r", getAccel(2));
+
+			sampleFlag = 0;
+		}
+
 //		printf("%f \n\r", convertAccelmV(getAccel(2)));
 ////				convertAccelGforce(getAccel(2)));
 	}

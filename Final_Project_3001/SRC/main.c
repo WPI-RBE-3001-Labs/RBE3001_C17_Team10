@@ -273,28 +273,12 @@ int main(void) {
 	encInit(0);
 	initADC(LOWLINK);
 	setConst('L', 40, .5, .005);
+	setConst('H', 40, 0, 0);
 
 	while (1) {
-//		printf("while \n\r");
-		//	buttonSetVoltage();
-		//driveLink('L', 2048);
-		//printf("%d", sampleFlag);
-		//driveLink('L', 4095);
-		pollHomeButton();
-		streamArmData();
+	//	goToBothLinks(35,81);
+		gotoXY(0 , 27);
 
-		if (sampleFlag) {
-			printLowPotVal(getADC(LOWLINK));
-			printf("Encoder Counts: %d \n\r", encCount(0));
-			printf("X Axis Acceleration: %d \n\r", getAccel(0));
-			printf("Y Axis Acceleration: %d \n\r", getAccel(1));
-			printf("Z Axis Acceleration: %d \n\r", getAccel(2));
-
-			sampleFlag = 0;
-		}
-
-//		printf("%f \n\r", convertAccelmV(getAccel(2)));
-////				convertAccelGforce(getAccel(2)));
 	}
 	return 0;
 

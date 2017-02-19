@@ -31,56 +31,56 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 LSS += \
-Lab_3.lss \
+Final_Project_3001.lss \
 
 FLASH_IMAGE += \
-Lab_3.hex \
+Final_Project_3001.hex \
 
 EEPROM_IMAGE += \
-Lab_3.eep \
+Final_Project_3001.eep \
 
 SIZEDUMMY += \
 sizedummy \
 
 
 # All Target
-all: Lab_3.elf secondary-outputs
+all: Final_Project_3001.elf secondary-outputs
 
 # Tool invocations
-Lab_3.elf: $(OBJS) $(USER_OBJS)
+Final_Project_3001.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AVR C Linker'
-	avr-gcc -Wl,-Map,Lab_3.map -Wl,-u,vfprintf -lprintf_flt -lm -L"R:\3001\rbelib-17.1.0\RBELib\Release" -mmcu=atmega644p -o "Lab_3.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	avr-gcc -Wl,-Map,Final_Project_3001.map -Wl,-u,vfprintf -lprintf_flt -lm -L"C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release" -mmcu=atmega644p -o "Final_Project_3001.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-Lab_3.lss: Lab_3.elf
+Final_Project_3001.lss: Final_Project_3001.elf
 	@echo 'Invoking: AVR Create Extended Listing'
-	-avr-objdump -h -S Lab_3.elf  >"Lab_3.lss"
+	-avr-objdump -h -S Final_Project_3001.elf  >"Final_Project_3001.lss"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Lab_3.hex: Lab_3.elf
+Final_Project_3001.hex: Final_Project_3001.elf
 	@echo 'Create Flash image (ihex format)'
-	-avr-objcopy -R .eeprom -R .fuse -R .lock -R .signature -O ihex Lab_3.elf  "Lab_3.hex"
+	-avr-objcopy -R .eeprom -R .fuse -R .lock -R .signature -O ihex Final_Project_3001.elf  "Final_Project_3001.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Lab_3.eep: Lab_3.elf
+Final_Project_3001.eep: Final_Project_3001.elf
 	@echo 'Create eeprom image (ihex format)'
-	-avr-objcopy -j .eeprom --no-change-warnings --change-section-lma .eeprom=0 -O ihex Lab_3.elf  "Lab_3.eep"
+	-avr-objcopy -j .eeprom --no-change-warnings --change-section-lma .eeprom=0 -O ihex Final_Project_3001.elf  "Final_Project_3001.eep"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-sizedummy: Lab_3.elf
+sizedummy: Final_Project_3001.elf
 	@echo 'Invoking: Print Size'
-	-avr-size --format=avr --mcu=atmega644p Lab_3.elf
+	-avr-size --format=avr --mcu=atmega644p Final_Project_3001.elf
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(FLASH_IMAGE)$(ELFS)$(OBJS)$(ASM_DEPS)$(EEPROM_IMAGE)$(S_DEPS)$(SIZEDUMMY)$(S_UPPER_DEPS)$(LSS)$(C_DEPS) Lab_3.elf
+	-$(RM) $(FLASH_IMAGE)$(ELFS)$(OBJS)$(ASM_DEPS)$(EEPROM_IMAGE)$(S_DEPS)$(SIZEDUMMY)$(S_UPPER_DEPS)$(LSS)$(C_DEPS) Final_Project_3001.elf
 	-@echo ' '
 
 secondary-outputs: $(LSS) $(FLASH_IMAGE) $(EEPROM_IMAGE) $(SIZEDUMMY)

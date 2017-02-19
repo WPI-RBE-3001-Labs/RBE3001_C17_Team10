@@ -8,6 +8,11 @@
 #include <avr/io.h>
 #include <math.h>
 
+#define link1 15
+#define link2 12
+
+#define deg2Rad 360/(2*M_PI)
+
 /**
  * @brief Helper function to stop the motors on the arm.
  *
@@ -49,13 +54,34 @@ void stopMotors() {
  *
  * @todo Use kinematic equations to move the end effector to the desired position.
  */
-//void gotoXY(int x, int y) {
-//
-//	angle2= atan2((+-sqrt(1-((x^2)+(y^2)-(link1^2)-(link2^2)^2)/(2*link1*link2))),((x^2)+(y^2)-(link1^2)+(link2^2))/(2*link1*link2));
-//
-//	angle1= atan2(y,x) - atan2((link2*sin(angle2)),(link1 + (link2 * cos(angle2))));
-//
-//}
+void gotoXY(int x, int y) {
+	//angle 1 is the low link angle
+	//angle 2 is the high link angle
+
+	float angle1, angle2 = 0;
+
+	float xsq = x * x;
+	float ysq = y * y;
+
+	float l1sq = link1 * link1;
+	float l2sq = link2 * link2;
+//------------------------------------------------------------------------------------------
+	angle1 = atan(y / x)
+			+ acos((xsq + ysq + l1sq - l2sq) / (2 * link1 * sqrt(xsq + ysq)));
+
+	angle1 = (int) (angle1 * deg2Rad) + 135;
+//------------------------------------------------------------------------------------------
+	angle2 = -acos(((l1sq + l2sq) - (xsq + ysq)) / (2 * link1 * link2));
+
+	angle2 = (int) (deg2Rad * angle2) + 270;
+//------------------------------------------------------------------------------------------
+
+	printf("%f %f \n\r", angle1, angle2);
+
+	goToBothLinks(angle1, angle2);
+	//goToBothLinks(35, 80);
+
+}
 /**
  * @brief Drive a link (upper or lower) in a desired direction.
  *

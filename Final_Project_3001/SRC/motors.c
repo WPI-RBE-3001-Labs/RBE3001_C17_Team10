@@ -66,19 +66,30 @@ void gotoXY(int x, int y) {
 	float l1sq = link1 * link1;
 	float l2sq = link2 * link2;
 //------------------------------------------------------------------------------------------
-	angle1 = atan(y / x)
+	angle1 = atan2(y, x)
 			+ acos((xsq + ysq + l1sq - l2sq) / (2 * link1 * sqrt(xsq + ysq)));
 
-	angle1 = (int) (angle1 * deg2Rad) + 135;
+	angle1 = (int) (angle1 * deg2Rad);
+	if (angle1 >= 90)
+		angle1 = 90;
+	else if (angle1 <= 0)
+		angle1 = 0;
 //------------------------------------------------------------------------------------------
-	angle2 = -acos(((l1sq + l2sq) - (xsq + ysq)) / (2 * link1 * link2));
+	angle2 = acos(((l1sq + l2sq) - (xsq + ysq)) / (2 * link1 * link2));
 
-	angle2 = (int) (deg2Rad * angle2) + 270;
+	angle2 = (int) (deg2Rad * angle2);
+
+	if (angle1 >= 180)
+		angle1 = 180;
+	else if (angle1 <= 0)
+		angle1 = 0;
 //------------------------------------------------------------------------------------------
 
 	printf("%f %f \n\r", angle1, angle2);
 
-	goToBothLinks(angle1, angle2);
+	//printf("%f \n\r", (atan2(-4, 15) * deg2Rad));
+
+	//goToBothLinks(angle1, angle2);
 	//goToBothLinks(35, 80);
 
 }

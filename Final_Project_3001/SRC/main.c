@@ -4,11 +4,10 @@
  *      Author: Joest
  */
 
-#include <RBELib/RBELib.h>
+#include <RBELib.h>
 //For use of abs()
 #include <stdlib.h>
 #include <avr/io.h>
-#include <RBELib/ADC.h>
 
 #define LOWLINK 2
 #define HIGHLINK 3
@@ -276,8 +275,8 @@ int main(void) {
 	setConst('H', 40, 0, 0);
 
 	while (1) {
-	//	goToBothLinks(35,81);
-		gotoXY(0 , 27);
+		//	goToBothLinks(35,81);
+		gotoXY(15, -4);
 
 	}
 	return 0;

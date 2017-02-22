@@ -5,7 +5,7 @@
  *      Author: ADMIN
  */
 
-#include <RBELib/RBELib.h>
+#include <RBELib.h>
 #include <math.h>
 
 #define KPPOT 7

@@ -9,6 +9,8 @@
 #include <encoderMacros.h>
 #include <math.h>
 
+
+
 float vref = 5;
 float GfCnv = 0.22;
 float Cnt2Mv = 0.80586;
@@ -32,6 +34,7 @@ signed int getAccel(int axis) {
 	return result;
 }
 
+
 float convertAccelmV(int accelValue) {
 	float mv = 0;
 	mv = pow(accelValue, Cnt2Mv);
@@ -53,6 +56,14 @@ float convertAccelGforce(int accelValue) {
 }
 
 int IRDist(int chan) {
+
+	 int IrVal = 0;
+	 IrVal = getADC(chan);
+
+
+	int CmDist = 0;
+	CmDist = ((IrVal - 905.05) / -47.286) + 2;
+	return CmDist;
 
 }
 

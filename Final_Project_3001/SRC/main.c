@@ -4,7 +4,7 @@
  *      Author: Joest
  */
 
-#include <RBELib.h>
+#include <RBELib/RBELib.h>
 //For use of abs()
 #include <stdlib.h>
 #include <avr/io.h>
@@ -271,12 +271,18 @@ int main(void) {
 
 	encInit(0);
 	initADC(LOWLINK);
+	initADC(4);
 	setConst('L', 40, .5, .005);
 	setConst('H', 40, 0, 0);
 
 	while (1) {
 		//	goToBothLinks(35,81);
-		gotoXY(15, -4);
+		//gotoXY(15, -4);
+		stopMotors();
+		printf("%d \n\r", IRDist(4));
+	setServo(0, 180);
+//		setServo(5, 255);
+
 
 	}
 	return 0;

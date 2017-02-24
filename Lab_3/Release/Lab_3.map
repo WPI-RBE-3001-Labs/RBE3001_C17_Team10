@@ -2,10 +2,10 @@ Archive member included because of file (symbol)
 
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libprintf_flt.a(vfprintf_flt.o)
                               (vfprintf)
-R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o)
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o)
                               ./SRC/main.o (initRBELib)
-R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o)
-                              R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o) (initAltCom)
+C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o)
+                              C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o) (initAltCom)
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3.o)
                               ./SRC/PID.o (__subsf3)
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3x.o)
@@ -79,11 +79,11 @@ c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strn
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(fputc.o)
                               c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libprintf_flt.a(vfprintf_flt.o) (fputc)
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(iob.o)
-                              R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o) (__iob)
+                              C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o) (__iob)
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(printf.o)
                               ./SRC/Periph.o (printf)
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o)
-                              R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o) (sprintf)
+                              C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o) (sprintf)
 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
                               c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libprintf_flt.a(vfprintf_flt.o) (__ultoa_invert)
 
@@ -122,7 +122,7 @@ LOAD ./SRC/main.o
 LOAD ./SRC/motorCurrentSensor.o
 LOAD ./SRC/motors.o
 LOAD ./SRC/timer.o
-LOAD R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a
+LOAD C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a
 LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a
 LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a
@@ -323,8 +323,8 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .text          0x0000023e        0x0 ./SRC/motorCurrentSensor.o
  .text          0x0000023e        0x0 ./SRC/motors.o
  .text          0x0000023e        0x0 ./SRC/timer.o
- .text          0x0000023e        0x0 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o)
- .text          0x0000023e        0x0 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o)
+ .text          0x0000023e        0x0 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o)
+ .text          0x0000023e        0x0 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o)
  .text          0x0000023e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3.o)
  .text          0x0000023e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3x.o)
  .text          0x0000023e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(divsf3.o)
@@ -501,22 +501,22 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x00001c58       0x22 ./SRC/timer.o
                 0x00001c58                setCompValue
  .text.initRBELib
-                0x00001c7a       0x1a R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o)
+                0x00001c7a       0x1a C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o)
                 0x00001c7a                initRBELib
  .text.printfRBE
-                0x00001c94        0xa R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o)
+                0x00001c94        0xa C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o)
                 0x00001c94                printfRBE
  .text.initAltCom
-                0x00001c9e       0x38 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o)
+                0x00001c9e       0x38 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o)
                 0x00001c9e                initAltCom
  .text.setCharDebug
-                0x00001cd6       0x10 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o)
+                0x00001cd6       0x10 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o)
                 0x00001cd6                setCharDebug
  .text.coPrintf
-                0x00001ce6       0x1a R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o)
+                0x00001ce6       0x1a C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o)
                 0x00001ce6                coPrintf
  .text.setServo
-                0x00001d00       0x84 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o)
+                0x00001d00       0x84 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o)
                 0x00001d00                setServo
  .text.avr-libc.fplib
                 0x00001d84        0xa c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3.o)
@@ -679,8 +679,8 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .data          0x008001af        0x0 ./SRC/motorCurrentSensor.o
  .data          0x008001af        0x0 ./SRC/motors.o
  .data          0x008001af        0x0 ./SRC/timer.o
- .data          0x008001af        0x0 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o)
- .data          0x008001af       0x14 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o)
+ .data          0x008001af        0x0 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o)
+ .data          0x008001af       0x14 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o)
  .data          0x008001c3        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3.o)
  .data          0x008001c3        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3x.o)
  .data          0x008001c3        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(divsf3.o)
@@ -745,7 +745,7 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x008001df                VCC
  .data.ADCMAX   0x008001e3        0x4 ./SRC/motorCurrentSensor.o
                 0x008001e3                ADCMAX
- .data.RBEOut   0x008001e7        0xe R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o)
+ .data.RBEOut   0x008001e7        0xe C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o)
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.d*)
@@ -771,8 +771,8 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .bss           0x008001f6        0x0 ./SRC/motorCurrentSensor.o
  .bss           0x008001f6        0x0 ./SRC/motors.o
  .bss           0x008001f6        0x0 ./SRC/timer.o
- .bss           0x008001f6        0x0 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(Debug.o)
- .bss           0x008001f6        0x0 R:\3001\rbelib-17.1.0\RBELib\Release\libRBELib.a(SetServo.o)
+ .bss           0x008001f6        0x0 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(Debug.o)
+ .bss           0x008001f6        0x0 C:\Users\thagen\git\RBE3001_C17_Team10\RBELib\RBELib\Release\libRBELib.a(SetServo.o)
  .bss           0x008001f6        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3.o)
  .bss           0x008001f6        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(addsf3x.o)
  .bss           0x008001f6        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a(divsf3.o)

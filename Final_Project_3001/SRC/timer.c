@@ -4,7 +4,7 @@
  *  Created on: Jan 22, 2017
  *      Author: Tom Hagen
  */
-#include <RBELib.h>
+#include <RBELib/RBELib.h>
 #include <avr/io.h>
 
 void initTimer(int number, int mode, unsigned int comp) {

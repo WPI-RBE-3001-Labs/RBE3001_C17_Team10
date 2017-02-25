@@ -40,7 +40,7 @@ void printHighPotVal(int potVal) {
 	//300/1023
 	unsigned int angle = ((potVal * .26) - 85) + 90;		//in degrees
 ////293255132
-	printf("%d %d %d \n\r", potVal, mV, angle);
+	printf("%d %d \n\r", potVal, angle);
 }
 
 void printLowPotVal(int potVal) {
@@ -280,18 +280,20 @@ int main(void) {
 		//driveLink('L', 2048);
 		//printf("%d", sampleFlag);
 		//driveLink('L', 4095);
-		pollHomeButton();
-		streamArmData();
-
-		if (sampleFlag) {
-			printLowPotVal(getADC(LOWLINK));
-			printf("Encoder Counts: %d \n\r", encCount(0));
-			printf("X Axis Acceleration: %d \n\r", getAccel(0));
-			printf("Y Axis Acceleration: %d \n\r", getAccel(1));
-			printf("Z Axis Acceleration: %d \n\r", getAccel(2));
-
-			sampleFlag = 0;
-		}
+		//goToLowLink(60);
+		printHighPotVal(getADC(HIGHLINK));
+		//		pollHomeButton();
+//		streamArmData();
+//
+//		if (sampleFlag) {
+//			printLowPotVal(getADC(LOWLINK));
+//			printf("Encoder Counts: %d \n\r", encCount(0));
+//			printf("X Axis Acceleration: %d \n\r", getAccel(0));
+//			printf("Y Axis Acceleration: %d \n\r", getAccel(1));
+//			printf("Z Axis Acceleration: %d \n\r", getAccel(2));
+//
+//			sampleFlag = 0;
+//		}
 
 //		printf("%f \n\r", convertAccelmV(getAccel(2)));
 ////				convertAccelGforce(getAccel(2)));

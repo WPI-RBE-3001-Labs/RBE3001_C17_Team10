@@ -9,9 +9,9 @@
 #include <math.h>
 
 #define link1 15
-#define link2 12
+#define link2 16
 
-#define deg2Rad 360/(2*M_PI)
+#define deg2Rad 180/(M_PI)
 
 /**
  * @brief Helper function to stop the motors on the arm.
@@ -55,42 +55,108 @@ void stopMotors() {
  * @todo Use kinematic equations to move the end effector to the desired position.
  */
 void gotoXY(int x, int y) {
-	//angle 1 is the low link angle
-	//angle 2 is the high link angle
 
-	float angle1, angle2 = 0;
+	float gamma = 0;
+	float beta = 0;
+
+	float theta2 = 0;
+	float theta1[2];
+	float point1[2];
+	float point2[2];
+	float actTheta1 = 0;
 
 	float xsq = x * x;
 	float ysq = y * y;
-
 	float l1sq = link1 * link1;
 	float l2sq = link2 * link2;
+	float l12 = link1 * link2;
+	float a = xsq + ysq - l1sq - l2sq;
+	float b = 2 * l12;
+	float ab = (a / b);
+
+//	printf("XSQ = %d \n\r", xsq);
+//	printf("YSQ = %d \n\r", ysq);
+//	printf("%d \n\r", l1sq);
+//	printf("%d \n\r", l2sq);
+//	printf("%d \n\r", l12);
+//	printf("%d \n\r", a);
+//	printf("%d \n\r", b);
+//	printf("%f \n\r", ab);
+
+	theta2 = -acos(ab);
+//	printf("%f \n\r", theta2 * deg2Rad);
+
+	beta = atan2(y, x);
+	gamma = acos((l1sq + xsq + ysq - l2sq) / (2 * link1 * sqrt(xsq + ysq)));
+
+	theta1[0] = (beta + gamma);
+	theta1[1] = (beta - gamma);
+
+//	printf("%f \n\r", theta1[0] * deg2Rad);
+//	printf("%f \n\r", theta1[1] * deg2Rad);
+
+	point1[0] = round(
+	link1 * cos(theta1[0]) + link2 * cos(theta1[0] + theta2));
+	point1[1] = round(
+	link1 * sin(theta1[0]) + link2 * sin(theta1[0] + theta2));
+
+//	printf("%f \n\r", point1[0]);
+//	printf("%f \n\r", point1[1]);
+
+	point2[0] = round(link1 * cos(theta1[1]) + link2 * cos(theta1[1] + theta2));
+	point2[1] = round(link1 * sin(theta1[1]) + link2 * sin(theta1[1] + theta2));
+
+//	printf("%f \n\r", point2[0]);
+//	printf("%f \n\r", point2[1]);
+
+	if (point1[0] == x && point1[1] == y)
+		actTheta1 = theta1[0] * deg2Rad;
+	else if ((point2[0] == x) && (point2[1] == y))
+		actTheta1 = theta1[1] * deg2Rad;
+	else
+		printf("No Angles to be made");
+	theta2 *= deg2Rad;
+
+	if (theta2 >= 0) {
+		theta2 += 90;
+	} else {
+		theta2 = 90 + theta2;
+	}
+//
+//	printf("%f \n\r", actTheta1);
+//	printf("%f \n\r", theta2);
+
+	goToBothLinks((int) actTheta1, (int) theta2);
+//	//angle 1 is the low link angle
+//	//angle 2 is the high link angle
+//
+//
+////------------------------------------------------------------------------------------------
+//	angle1 = atan2(y, x)
+//			+ acos((xsq + ysq + l1sq - l2sq) / (2 * link1 * sqrt(xsq + ysq)));
+//
+//	angle1 = (int) (angle1 * deg2Rad);
+//	if (angle1 >= 90)
+//		angle1 = 90;
+//	else if (angle1 <= 0)
+//		angle1 = 0;
+////------------------------------------------------------------------------------------------
+//	angle2 = acos(((l1sq + l2sq) - (xsq + ysq)) / (2 * link1 * link2));
+//
+//	angle2 = (int) (deg2Rad * angle2);
+//
+//	if (angle1 >= 180)
+//		angle1 = 180;
+//	else if (angle1 <= 0)
+//		angle1 = 0;
 //------------------------------------------------------------------------------------------
-	angle1 = atan2(y, x)
-			+ acos((xsq + ysq + l1sq - l2sq) / (2 * link1 * sqrt(xsq + ysq)));
 
-	angle1 = (int) (angle1 * deg2Rad);
-	if (angle1 >= 90)
-		angle1 = 90;
-	else if (angle1 <= 0)
-		angle1 = 0;
-//------------------------------------------------------------------------------------------
-	angle2 = acos(((l1sq + l2sq) - (xsq + ysq)) / (2 * link1 * link2));
+//	printf("%d %d \n\r", actTheta1, theta2);
 
-	angle2 = (int) (deg2Rad * angle2);
+//printf("%f \n\r", (atan2(-4, 15) * deg2Rad));
 
-	if (angle1 >= 180)
-		angle1 = 180;
-	else if (angle1 <= 0)
-		angle1 = 0;
-//------------------------------------------------------------------------------------------
-
-	printf("%f %f \n\r", angle1, angle2);
-
-	//printf("%f \n\r", (atan2(-4, 15) * deg2Rad));
-
-	//goToBothLinks(angle1, angle2);
-	//goToBothLinks(35, 80);
+//goToBothLinks(angle1, angle2);
+//goToBothLinks(35, 80);
 
 }
 /**

@@ -265,24 +265,26 @@ int main(void) {
 	debugUSARTInit(115200);
 	initSPI();
 
-	initTimer(0, NORMAL, 0);
+//	initTimer(0, NORMAL, 0);
 
 	//printf("Encoder Counts\n\r");
 
-	encInit(0);
 	initADC(LOWLINK);
+	initADC(HIGHLINK);
 	initADC(4);
 	setConst('L', 40, .5, .005);
 	setConst('H', 40, 0, 0);
 
 	while (1) {
 		//	goToBothLinks(35,81);
-		//gotoXY(15, -4);
-		stopMotors();
-		printf("%d \n\r", IRDist(4));
-	setServo(0, 180);
+		//printf("%f \n\r", cos(60));
+		//gotoXY(20, 20);
+		driveLink('L', 4095);
+		printf("%d \n\r", getADC(HIGHLINK));
+		//stopMotors();
+		//printf("%d \n\r", IRDist(4));
+		//setServo(0, 180);
 //		setServo(5, 255);
-
 
 	}
 	return 0;

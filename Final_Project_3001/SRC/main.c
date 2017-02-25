@@ -278,13 +278,14 @@ int main(void) {
 	while (1) {
 		//	goToBothLinks(35,81);
 		//printf("%f \n\r", cos(60));
-		//gotoXY(20, 20);
-		driveLink('L', 4095);
-		printf("%d \n\r", getADC(HIGHLINK));
+		gotoXY(13, 20);
+
+		//goToHighLink(170);
+		//printf("%d \n\r", getADC(HIGHLINK));
 		//stopMotors();
 		//printf("%d \n\r", IRDist(4));
 		//setServo(0, 180);
-//		setServo(5, 255);
+		setServo(5, 255);
 
 	}
 	return 0;

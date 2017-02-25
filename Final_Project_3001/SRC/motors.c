@@ -183,13 +183,9 @@ void driveLink(char link, int value) {
 		if (value >= 0) {
 			setDAC(0, 0);
 			setDAC(1, value);
-			setDAC(2, 0);
-			setDAC(3, 0);
 		} else {
 			setDAC(0, -value);
 			setDAC(1, 0);
-			setDAC(2, 0);
-			setDAC(3, 0);
 		}
 		break;
 

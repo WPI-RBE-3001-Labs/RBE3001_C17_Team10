@@ -15,7 +15,8 @@ float calcCurrent(int val) {
 	//First convert the reading to voltage
 	//
 	//The resistor across the sensor is .5Ohms
-	float curr = ((float) (val * VCC / ADCMAX) - offset) / gain / resistorVal;
-	//printf("%f \n\r", curr);
+	float curr = ((float) 1000 * (val * VCC / ADCMAX) - offset) / gain
+			/ resistorVal;
+	printf("%f \n\r", curr);
 	return curr;
 }

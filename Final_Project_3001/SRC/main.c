@@ -12,8 +12,15 @@
 #define LOWLINK 2
 #define HIGHLINK 3
 #define CURRSENSOR 0
+//100 Hz = 45
+//Going down takes 1s, need to wait 8 seconds before going down
+#define goDownMaxCount 8*45*600
+//Some time to grab weight when under the gripper, AKA Trial and error
+#define bringUpMaxCount 4*500
+//Goes down for 1s then only drop the weight when we need to
+#define openGripMaxCount 45*500*1.1
 
-#define AXIS 2
+#define WEIGHTTHRESHOLD 1500
 
 int timestamp = 0;
 volatile int count = 0;
@@ -28,57 +35,18 @@ int armState = 0;
 //next line for triangle
 int nextLine = 0;
 
+int pickupFlag = 1;
+int state;
+int xIR = 0;
+int timerFlag;
+int goDownFlag = 0;
+int bringUpFlag = 0;
+int openGripFlag = 0;
+
 int linkAngle(int angle) {
 	return (angle + 85) / .26;
 }
 
-void printHighPotVal(int potVal) {
-	//5000/1023
-	unsigned int mV = potVal * 4.88758;		//in millivolts
-
-	//300/1023
-	unsigned int angle = ((potVal * .26) - 85) + 90;		//in degrees
-////293255132
-	printf("%d %d %d \n\r", potVal, mV, angle);
-}
-
-void printLowPotVal(int potVal) {
-	//5000/1023
-	//unsigned int mV = potVal * 4.88758;		//in millivolts
-
-	//300/1023
-	unsigned int angle = (potVal * .26) - 85;		//in degrees
-//293255132
-	printf("Arm Angle: %d \n\r", angle);
-}
-
-void readPotVal() {
-	int val = getADC(LOWLINK);
-	clearADC(LOWLINK);
-	printLowPotVal(val);
-}
-
-void sampleADC(int seconds) {
-
-	while (timestamp < seconds) {
-		readPotVal(LOWLINK);
-		_delay_ms(1000);
-		timestamp++;
-	}
-}
-
-void outputTriangle(int peak) {
-	int i = 0;
-	for (i = 0; i <= peak; i++) {
-		setDAC(0, i);
-		setDAC(1, peak - i);
-	}
-	for (i = peak; i > 0; i--) {
-		setDAC(0, i);
-		setDAC(1, peak - i);
-
-	}
-}
 void goToLowLink(int setPos) {
 	int potVal = linkAngle(setPos);
 
@@ -102,75 +70,7 @@ void goToHighLink(int setPos) {
 
 	driveLink('H', value);
 }
-void buttonGoTo() {
 
-	if (!PINCbits._P7) {
-		goToLowLink(0);
-		armState = 0;
-	} else if (!PINCbits._P6) {
-		goToLowLink(30);
-		armState = 30;
-
-	} else if (!PINCbits._P5) {
-		goToLowLink(60);
-		armState = 60;
-	} else if (!PINCbits._P4) {
-		goToLowLink(90);
-		armState = 90;
-	} else {
-		goToLowLink(0);
-		armState = 0;
-	}
-//	}
-//	if (!PINCbits._P6) {
-//		goTo(30);
-//	}
-//	if (!PINCbits._P5) {
-//		goTo(60);
-//	}
-//	if (!PINCbits._P4) {
-//		goTo(90);
-//
-//	}
-
-}
-//void part7() {
-//	goTo(400);
-//	changeADC(0);
-//	calcCurrent(getADC(0));
-//}
-
-void printArmData() {
-	changeADC(2);
-	int potVal = getADC(2);
-	changeADC(0);
-	int currVal = getADC(0);
-	float curr = calcCurrent(currVal);
-	unsigned int mV = potVal * 4.88758;		//in millivolts
-
-	//300/1023
-	unsigned int angle = (potVal * .23) - 75;		//in degrees)
-
-	printf("%d %d %f \n\r", armState, angle, mV, curr);
-}
-
-void buttonGoToXY() {
-
-	if (!PINCbits._P7) {
-		goToBothLinks(0, 90);
-	} else if (!PINCbits._P6) {
-		goToBothLinks(45, 0);
-	} else if (!PINCbits._P5) {
-		goToBothLinks(45, 90);
-	} else if (!PINCbits._P4) {
-		goToLowLink(20);
-		goToHighLink(45);
-	} else {
-		goToLowLink(45);
-		goToHighLink(10);
-
-	}
-}
 void goToBothLinks(int theta1, int theta2) {
 	if (theta1 > 90) {
 		theta1 = 90;
@@ -187,7 +87,8 @@ void goToBothLinks(int theta1, int theta2) {
 	goToHighLink(theta2);
 
 }
-void makeTriangle() {
+
+void pickupWeight() {
 	changeADC(2);
 
 	int angle1Deg = (getADC(2) * .26) - 85;
@@ -196,122 +97,208 @@ void makeTriangle() {
 
 	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
 
-	if (nextLine == 0) {
-		goToBothLinks(0, 90);
-		if ((angle1Deg <= 5 && angle1Deg >= -5)
-				&& (angle2Deg <= 5 && angle2Deg >= -5))
-			nextLine = 1;
-	} else if (nextLine == 1) {
-		goToBothLinks(45, 0);
-		if ((angle1Deg <= 50 && angle1Deg >= 40) && (angle2Deg <= 5))
-			nextLine = 2;
-	} else if (nextLine == 2) {
-		goToBothLinks(45, 90);
-		if ((angle1Deg <= 50 && angle1Deg >= 40)
-				&& (angle2Deg <= 5 && angle2Deg >= -5))
-			nextLine = 3;
-	} else if (nextLine == 3) {
-		goToBothLinks(0, 90);
-		if ((angle1Deg <= 5 && angle1Deg >= -5)
-				&& (angle2Deg <= 95 && angle2Deg >= 85))
-			nextLine = 4;
-	} else if (nextLine == 4) {
-		stopMotors();
-	}
-	//printf("%d %d \n\r", angle1Deg, angle2Deg);
+	goToBothLinks(90, 0);
+	if ((angle1Deg <= 95 && angle1Deg >= 85)
+			&& (angle2Deg <= 5 && angle2Deg >= -5))
+		pickupFlag = 0;
 }
 
-void buttonSetVoltage() {
-	if (!PINBbits._P0) {
+float analyzeWeight() {
+	changeADC(1);
+	int currVal = getADC(1);
+	float curr = calcCurrent(currVal);
+	return curr;
+	printf("%f \n\r", curr);
 
-		driveLink('L', 0);
+}
+void cg() {
+	setServo(0, 180);
+}
+void og() {
+	setServo(0, 0);
+}
+void bringWeightUp() {
+	goToBothLinks(90, 0);
+}
+void ggEZ() {
+	goToBothLinks(90, 90);
+}
+int inRange() {
+	int val = 0;
+	changeADC(2);
 
-	} else if (!PINBbits._P1) {
-		driveLink('L', 1024);
-	} else if (!PINBbits._P2) {
-		driveLink('L', -2048);
-	} else if (!PINBbits._P3) {
-		driveLink('L', 4095);
-	} else {
-		resetEncCount(0);
-		driveLink('L', 0);
-	}
+	int angle1Deg = (getADC(2) * .26) - 85;
+
+	changeADC(3);
+
+	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
+
+	if ((angle1Deg <= 25 && angle1Deg >= 10)
+			&& (angle2Deg <= -30 && angle2Deg >= -45))
+		val = 1;
+	printf("%d %d \n\r", angle1Deg, angle2Deg);
+	return val;
 }
 
-void streamArmData() {
-	if (!PINBbits._P0)
-		goToLowLink(85);
-	else {
-		goToLowLink(0);
-		resetEncCount(0);
-	}
-}
-void pollHomeButton() {
-	if (!PINBbits._P1) {
-		homeFlag = 1;
-		resetEncCount(0);
-	} else
-		homeFlag = 0;
-}
-
+enum state {
+	start,
+	getXD,
+	goToXD,
+	pickUPWeight,
+	ANALyzeWeight,
+	heavyWeight,
+	lightWeight,
+	celebrate
+};
+enum timerFlag {
+	goDown, bringUp, openGrip, none
+};
 int main(void) {
-	//Enable printf() and setServo()
+//Enable printf() and setServo()
 	initRBELib();
 
-	//setup buttons as inputs
-	DDRB &= ~((1 << PIN0) | (1 << PIN1));
-	DDRA |= (1 << PIN4);
+//setup buttons as inputs
+	DDRB &= ~(1 << PIN0);
 
 	debugUSARTInit(115200);
 	initSPI();
 
 //	initTimer(0, NORMAL, 0);
 
-	//printf("Encoder Counts\n\r");
+//printf("Encoder Counts\n\r");
 
 	initADC(LOWLINK);
 	initADC(HIGHLINK);
 	initADC(4);
+	initADC(1);
+	initTimer(0, NORMAL, 0);
+	timerFlag = none;
 	setConst('L', 40, .5, .005);
 	setConst('H', 40, 0, 0);
 
+	state = start;
+	setServo(5, 90);
+	og();
 	while (1) {
-		//	goToBothLinks(35,81);
-		//printf("%f \n\r", cos(60));
-		gotoXY(13, 20);
+		switch (state) {
 
-		//goToHighLink(170);
-		//printf("%d \n\r", getADC(HIGHLINK));
-		//stopMotors();
-		//printf("%d \n\r", IRDist(4));
-		//setServo(0, 180);
-		setServo(5, 255);
+		case start:
+			gotoXY(0, 31);
+			//setServo(5, 90);
+			if (!PINBbits._P0) {
 
+				setServo(5, 113);
+
+				state = getXD;
+
+				printf("Get XD");
+			}
+			break;
+		case getXD:
+			stopMotors();
+			setServo(0, 0);
+			if (IRDist(4) > 6 && IRDist(4) < 14) {
+				xIR = IRDist(4) + 19;
+				printf("%d \n\r", xIR);
+				state = goToXD;
+				//printf("GO TO XD");
+			}
+
+			break;
+		case goToXD:
+			timerFlag = goDown;
+
+			if (goDownFlag) {
+				gotoXY(xIR, 1);
+
+				if (inRange()) {
+					stopMotors();
+					state = pickUPWeight;
+
+				}
+
+				//printf("Pick up weight");
+			}
+			break;
+
+		case pickUPWeight:
+			timerFlag = bringUp;
+			cg();
+
+			if (bringUpFlag)
+				bringWeightUp();
+//			if (closeGripFlag) {
+//
+//			} else {
+//				//	bringWeightUp();
+//			}
+
+			break;
+
+		case ANALyzeWeight:
+			if (analyzeWeight() > WEIGHTTHRESHOLD)
+				state = heavyWeight;
+			else
+
+				state = lightWeight;
+			break;
+
+		case heavyWeight:
+			//goBackDown();
+			timerFlag = openGrip;
+			if (openGripFlag) {
+				stopMotors();
+				og();
+				state = celebrate;
+			}
+
+			break;
+
+		case lightWeight:
+			stopMotors();
+			og();
+			state = celebrate;
+			break;
+
+		case celebrate:
+			ggEZ();
+			break;
+
+		}
 	}
 	return 0;
 
 }
 
-//POT VALUES
-//720 = 90 deg
-//340 = 0 deg
-
-//}
-
 ISR(TIMER0_OVF_vect) {
 	count++;
+	switch (timerFlag) {
+	case goDown:
+		if (count >= goDownMaxCount) {
+			//printf("in\n\r");
+			goDownFlag = 1;
+			timerFlag = none;
+		}
+		break;
 
-	if (count >= maxCount) {
-		//printf("in");
-		sampleFlag = 1;
+	case bringUp:
+		if (count >= bringUpMaxCount) {
+			//printf("in");
+			bringUpFlag = 1;
+			timerFlag = none;
+
+		}
+		break;
+	case openGrip:
+		if (count >= openGripMaxCount) {
+			//printf("in");
+			openGripFlag = 1;
+			timerFlag = none;
+		}
+		break;
+	case none:
 		count = 0;
+		break;
 	}
-
-//	if (count > maxCount) {
-//		sampleFlag = 1;
-//
-//		PINAbits._P7 = 1
-//
-//		count = 0;
-//	}
 }
+

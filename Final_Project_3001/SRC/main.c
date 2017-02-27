@@ -133,10 +133,14 @@ int inRange() {
 
 	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
 
-	if ((angle1Deg <= 25 && angle1Deg >= 10)
-			&& (angle2Deg <= -30 && angle2Deg >= -45))
+	int desAngle1 = (int) getTheta1(xIR, 0);
+	int desAngle2 = (int) getTheta2(xIR, 0);
+
+	printf("%d %d \n\r", desAngle1, desAngle2);
+
+	if ((angle1Deg <= (desAngle1 + 5)) && (angle1Deg >= (desAngle2 - 5))
+			&& (angle2Deg <= (desAngle2 + 5)) && angle2Deg >= (desAngle2 - 5))
 		val = 1;
-	printf("%d %d \n\r", angle1Deg, angle2Deg);
 	return val;
 }
 
@@ -180,6 +184,7 @@ int main(void) {
 	setServo(5, 90);
 	og();
 	while (1) {
+
 		switch (state) {
 
 		case start:
@@ -187,18 +192,17 @@ int main(void) {
 			//setServo(5, 90);
 			if (!PINBbits._P0) {
 
-				setServo(5, 113);
+				setServo(5, 114);
 
 				state = getXD;
 
-				printf("Get XD");
 			}
 			break;
 		case getXD:
 			stopMotors();
 			setServo(0, 0);
 			if (IRDist(4) > 6 && IRDist(4) < 14) {
-				xIR = IRDist(4) + 19;
+				xIR = IRDist(4) + 17;
 				printf("%d \n\r", xIR);
 				state = goToXD;
 				//printf("GO TO XD");
@@ -209,15 +213,19 @@ int main(void) {
 			timerFlag = goDown;
 
 			if (goDownFlag) {
-				gotoXY(xIR, 1);
+				printf("%d \n\r", xIR);
+				if (xIR >= 30) {
+					goToBothLinks(0, 90);
+				} else
+					gotoXY(xIR, 0);
 
-				if (inRange()) {
-					stopMotors();
-					state = pickUPWeight;
+//				if (inRange()) {
+//					stopMotors();
+//					state = pickUPWeight;
+//
+//				}
 
-				}
-
-				//printf("Pick up weight");
+//printf("Pick up weight");
 			}
 			break;
 
@@ -227,11 +235,11 @@ int main(void) {
 
 			if (bringUpFlag)
 				bringWeightUp();
-//			if (closeGripFlag) {
-//
-//			} else {
-//				//	bringWeightUp();
-//			}
+			//			if (closeGripFlag) {
+			//
+			//			} else {
+			//				//	bringWeightUp();
+			//			}
 
 			break;
 
@@ -265,6 +273,7 @@ int main(void) {
 			break;
 
 		}
+
 	}
 	return 0;
 

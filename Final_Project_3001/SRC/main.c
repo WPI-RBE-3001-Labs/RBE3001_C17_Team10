@@ -100,8 +100,8 @@ int inRangeToGrip(int angle1, int angle2) {
 
 	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
 
-	if ((angle1Deg <= (angle1 + 10)) && (angle1Deg >= (angle1 - 10))
-			&& (angle2Deg <= (angle2 + 10)) && angle2Deg >= (angle2 - 10))
+	if ((angle1Deg <= (angle1 + 5)) && (angle1Deg >= (angle1 - 5))
+			&& (angle2Deg <= (angle2 + 5)) && angle2Deg >= (angle2 - 5))
 		val = 1;
 
 	return val;

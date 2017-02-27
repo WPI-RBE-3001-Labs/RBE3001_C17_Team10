@@ -19,6 +19,7 @@
 #define bringUpMaxCount 4*500
 //Goes down for 1s then only drop the weight when we need to
 #define openGripMaxCount 45*500*1.1
+#define closeGripMaxCount 40*50*1.025
 
 #define WEIGHTTHRESHOLD 1500
 
@@ -39,10 +40,13 @@ int pickupFlag = 1;
 int state;
 int xIR = 0;
 int timerFlag;
-int goDownFlag = 0;
-int bringUpFlag = 0;
-int openGripFlag = 0;
-
+volatile int goDownFlag = 0;
+volatile int bringUpFlag = 0;
+volatile int openGripFlag = 0;
+volatile int getIRFlag = 0;
+int IRCount = 0;
+volatile int closeGripFlag = 0;
+int flatCase = 0;
 int linkAngle(int angle) {
 	return (angle + 85) / .26;
 }
@@ -71,6 +75,38 @@ void goToHighLink(int setPos) {
 	driveLink('H', value);
 }
 
+int inRange(int angle1, int angle2) {
+	int val = 0;
+	changeADC(2);
+
+	int angle1Deg = (getADC(2) * .26) - 85;
+
+	changeADC(3);
+
+	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
+
+	if ((angle1Deg <= (angle1 + 5)) && (angle1Deg >= (angle1 - 5))
+			&& (angle2Deg <= (angle2 + 5)) && angle2Deg >= (angle2 - 5))
+		val = 1;
+	return val;
+}
+int inRangeToGrip(int angle1, int angle2) {
+	int val = 0;
+	changeADC(2);
+
+	int angle1Deg = (getADC(2) * .26) - 85;
+
+	changeADC(3);
+
+	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
+
+	if ((angle1Deg <= (angle1 + 10)) && (angle1Deg >= (angle1 - 10))
+			&& (angle2Deg <= (angle2 + 10)) && angle2Deg >= (angle2 - 10))
+		val = 1;
+
+	return val;
+}
+
 void goToBothLinks(int theta1, int theta2) {
 	if (theta1 > 90) {
 		theta1 = 90;
@@ -85,6 +121,9 @@ void goToBothLinks(int theta1, int theta2) {
 
 	goToLowLink(theta1);
 	goToHighLink(theta2);
+
+	if (inRange(theta1, theta2))
+		stopMotors();
 
 }
 
@@ -123,26 +162,6 @@ void bringWeightUp() {
 void ggEZ() {
 	goToBothLinks(90, 90);
 }
-int inRange() {
-	int val = 0;
-	changeADC(2);
-
-	int angle1Deg = (getADC(2) * .26) - 85;
-
-	changeADC(3);
-
-	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
-
-	int desAngle1 = (int) getTheta1(xIR, 0);
-	int desAngle2 = (int) getTheta2(xIR, 0);
-
-	printf("%d %d \n\r", desAngle1, desAngle2);
-
-	if ((angle1Deg <= (desAngle1 + 5)) && (angle1Deg >= (desAngle2 - 5))
-			&& (angle2Deg <= (desAngle2 + 5)) && angle2Deg >= (desAngle2 - 5))
-		val = 1;
-	return val;
-}
 
 enum state {
 	start,
@@ -155,7 +174,7 @@ enum state {
 	celebrate
 };
 enum timerFlag {
-	goDown, bringUp, openGrip, none
+	goDown, closeGrip, bringUp, openGrip, none
 };
 int main(void) {
 //Enable printf() and setServo()
@@ -184,12 +203,14 @@ int main(void) {
 	setServo(5, 90);
 	og();
 	while (1) {
-
+		/*stopMotors();
+		 og();
+		 */
+		//setServo(5, 114);
+		printf("%d %d \n\r", count, closeGripMaxCount);
 		switch (state) {
-
 		case start:
 			gotoXY(0, 31);
-			//setServo(5, 90);
 			if (!PINBbits._P0) {
 
 				setServo(5, 114);
@@ -201,9 +222,11 @@ int main(void) {
 		case getXD:
 			stopMotors();
 			setServo(0, 0);
+			changeADC(4);
 			if (IRDist(4) > 6 && IRDist(4) < 14) {
-				xIR = IRDist(4) + 17;
-				printf("%d \n\r", xIR);
+
+				xIR = IRDist(4) + 20;
+				//printf("%d %d \n\r", IRDist(4), xIR);
 				state = goToXD;
 				//printf("GO TO XD");
 			}
@@ -213,20 +236,32 @@ int main(void) {
 			timerFlag = goDown;
 
 			if (goDownFlag) {
-				printf("%d \n\r", xIR);
-				if (xIR >= 30) {
+				//printf("%d \n\r", xIR);
+				if (xIR >= 32) {
 					goToBothLinks(0, 90);
-				} else
-					gotoXY(xIR, 0);
-
-//				if (inRange()) {
-//					stopMotors();
-//					state = pickUPWeight;
-//
-//				}
-
-//printf("Pick up weight");
+					flatCase = 1;
+				} else if (xIR == 31) {
+					goToBothLinks(16, 61);
+					timerFlag = closeGrip;
+				} else {
+					gotoXY(xIR, 2);
+					timerFlag = closeGrip;
+				}
 			}
+
+			if (closeGripFlag) {
+				printf("here \n\r");
+				state = pickUPWeight;
+
+			}
+			if (inRangeToGrip(getTheta1(xIR, 2), getTheta2(xIR, 2))
+					&& flatCase) {
+				stopMotors();
+				state = pickUPWeight;
+
+			}
+			//printf("Pick up weight");
+
 			break;
 
 		case pickUPWeight:
@@ -286,6 +321,13 @@ ISR(TIMER0_OVF_vect) {
 		if (count >= goDownMaxCount) {
 			//printf("in\n\r");
 			goDownFlag = 1;
+			timerFlag = none;
+		}
+		break;
+	case closeGrip:
+		if (count >= closeGripMaxCount) {
+			closeGripFlag = 1;
+			putCharDebug('a');
 			timerFlag = none;
 		}
 		break;

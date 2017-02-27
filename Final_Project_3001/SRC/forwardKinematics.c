@@ -77,7 +77,7 @@ int getTheta1(int x, int y) {
 	else
 		printf("No Angles to be made");
 	theta2 *= deg2Rad;
-	//printf("%d \n\r", (int) actTheta1);
+	printf("%d \n\r", (int) actTheta1);
 	return (int) actTheta1;
 
 }
@@ -131,6 +131,7 @@ int getTheta2(int x, int y) {
 	} else {
 		theta2 = 90 + theta2;
 	}
+	printf("%d \n\r", (int) theta2);
 
 	return (int) theta2;
 }

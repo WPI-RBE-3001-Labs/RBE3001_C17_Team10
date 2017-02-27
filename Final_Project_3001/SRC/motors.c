@@ -123,8 +123,6 @@ void gotoXY(int x, int y) {
 		theta2 = 90 + theta2;
 	}
 //
-	printf("%f \n\r", actTheta1);
-	printf("%f \n\r", theta2);
 
 	goToBothLinks((int) actTheta1, (int) theta2);
 //	//angle 1 is the low link angle

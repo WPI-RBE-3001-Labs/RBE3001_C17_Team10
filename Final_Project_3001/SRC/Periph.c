@@ -62,7 +62,7 @@ int IRDist(int chan) {
 
 
 	int CmDist = 0;
-	CmDist = ((IrVal - 905.05) / -47.286) + 2;
+	CmDist = ((IrVal - 905.05) / -47.286) + 2.3;
 	return CmDist;
 
 }

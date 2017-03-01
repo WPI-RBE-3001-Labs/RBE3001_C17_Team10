@@ -51,7 +51,8 @@ int flatCase = 0;
 volatile int weighFlag = 0;
 int currents[100];
 long currVal = 0;
-
+int reRunFlag = 0;
+int previousCurrent = 0;
 int linkAngle(int angle) {
 	return (angle + 85) / .26;
 }
@@ -221,6 +222,11 @@ int main(void) {
 	setServo(5, 90);
 	og();
 	while (1) {
+//		if (IRDist(4) > 6 && IRDist(4) < 14) {
+//
+//			xIR = IRDist(4) + 20;
+//			printf("%d \n\r", xIR);
+//		}
 //		og();
 //		stopMotors();
 //		goToBothLinks(90, 0);
@@ -231,13 +237,17 @@ int main(void) {
 		switch (state) {
 		case start:
 			gotoXY(0, 31);
-			if (!PINBbits._P0) {
 
-				setServo(5, 113);
+//			if (reRunFlag)
+//				state = getXD;
+//
+//			if (!PINBbits._P0) {
 
+			setServo(5, 113);
+			if (inRange(90, 0)) {
 				state = getXD;
 
-			}
+			}	//}
 			break;
 		case getXD:
 			stopMotors();
@@ -271,6 +281,7 @@ int main(void) {
 
 			if (closeGripFlag) {
 				printf("here \n\r");
+
 				state = pickUPWeight;
 
 			}
@@ -307,28 +318,32 @@ int main(void) {
 			bringWeightUp();
 			printf("%ld \n\r", analyzeWeight());
 			//			float testtt = analyzeWeight();
-//			printf("%f \n\r", testtt);
-//			timerFlag = weigh;
-//			if (weighFlag) {
-//
-//				if (testtt < 60 && testtt > 40)
-//					state = garbageCurrent;
-//				else if (testtt < 40)
-//					state = heavyWeight;
-//				else
-//					state = lightWeight;
-//			}
+			//			printf("%f \n\r", testtt);
+			//			timerFlag = weigh;
+			//			if (weighFlag) {
+			//
+			//				if (testtt < 60 && testtt > 40)
+			//					state = garbageCurrent;
+			//				else if (testtt < 40)
+			//					state = heavyWeight;
+			//				else
+			//					state = lightWeight;
+			//			}
 
 			timerFlag = weigh;
 			if (weighFlag) {
-
-				if (analyzeWeight() > 520 && analyzeWeight() > 550)
+				int currentReading = analyzeWeight();
+				if ((previousCurrent >= 480 && previousCurrent <= 510)
+						|| previousCurrent == 0)
 					state = garbageCurrent;
-				else if (analyzeWeight() < 520)
+				else if (previousCurrent < 480)
 					state = heavyWeight;
 				else
 					state = lightWeight;
+
+				previousCurrent = currentReading;
 			}
+
 			break;
 
 		case garbageCurrent:
@@ -342,7 +357,14 @@ int main(void) {
 			if (inRange(15, -30)) {
 				stopMotors();
 				og();
-				state = celebrate;
+				reRunFlag = 1;
+				goDownFlag = 0;
+				bringUpFlag = 0;
+				openGripFlag = 0;
+				getIRFlag = 0;
+				closeGripFlag = 0;
+				weighFlag = 0;
+				state = start;
 			}
 
 			break;
@@ -350,7 +372,17 @@ int main(void) {
 		case lightWeight:
 			printf("Light \n\r");
 			og();
-			state = celebrate;
+			reRunFlag = 1;
+
+			goDownFlag = 0;
+			bringUpFlag = 0;
+			openGripFlag = 0;
+			getIRFlag = 0;
+			closeGripFlag = 0;
+			weighFlag = 0;
+			count = 0;
+			state = start;
+
 			break;
 
 		case celebrate:

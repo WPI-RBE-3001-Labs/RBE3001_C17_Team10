@@ -113,8 +113,8 @@ void gotoXY(int x, int y) {
 		actTheta1 = theta1[0] * deg2Rad;
 	else if ((point2[0] == x) && (point2[1] == y))
 		actTheta1 = theta1[1] * deg2Rad;
-	else
-		printf("No Angles to be made");
+	//else
+	//printf("No Angles to be made");
 	theta2 *= deg2Rad;
 
 	if (theta2 >= 0) {

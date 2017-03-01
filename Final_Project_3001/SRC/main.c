@@ -20,6 +20,7 @@
 //Goes down for 1s then only drop the weight when we need to
 #define openGripMaxCount 45*500*1.1
 #define closeGripMaxCount 40*50*1.025
+#define weighMaxCount 40*500*1.025
 
 #define WEIGHTTHRESHOLD 1500
 
@@ -47,6 +48,10 @@ volatile int getIRFlag = 0;
 int IRCount = 0;
 volatile int closeGripFlag = 0;
 int flatCase = 0;
+volatile int weighFlag = 0;
+int currents[100];
+long currVal = 0;
+
 int linkAngle(int angle) {
 	return (angle + 85) / .26;
 }
@@ -84,10 +89,11 @@ int inRange(int angle1, int angle2) {
 	changeADC(3);
 
 	int angle2Deg = ((getADC(3) * .26) - 85) - 90;
-
+	//printf("%d %d \n\r", angle1Deg, angle2Deg);
 	if ((angle1Deg <= (angle1 + 5)) && (angle1Deg >= (angle1 - 5))
 			&& (angle2Deg <= (angle2 + 5)) && angle2Deg >= (angle2 - 5))
 		val = 1;
+
 	return val;
 }
 int inRangeToGrip(int angle1, int angle2) {
@@ -122,8 +128,8 @@ void goToBothLinks(int theta1, int theta2) {
 	goToLowLink(theta1);
 	goToHighLink(theta2);
 
-	if (inRange(theta1, theta2))
-		stopMotors();
+//	if (inRange(theta1, theta2))
+//		stopMotors();
 
 }
 
@@ -142,13 +148,22 @@ void pickupWeight() {
 		pickupFlag = 0;
 }
 
-float analyzeWeight() {
+long analyzeWeight() {
 	changeADC(1);
-	int currVal = getADC(1);
-	float curr = calcCurrent(currVal);
-	return curr;
-	printf("%f \n\r", curr);
 
+	for (int i = 0; i < 100; i++)
+		currents[i] = getADC(1);
+
+	for (int i = 0; i < 100; i++)
+		currVal += currents[i];
+
+	currVal = currVal / 100;
+	//printf("%f \n\r", calcCurrent(currVal));
+	return currVal;
+
+}
+void goBackDown() {
+	goToBothLinks(15, 60);
 }
 void cg() {
 	setServo(0, 180);
@@ -168,13 +183,14 @@ enum state {
 	getXD,
 	goToXD,
 	pickUPWeight,
-	ANALyzeWeight,
+	weighWeight,
+	garbageCurrent,
 	heavyWeight,
 	lightWeight,
 	celebrate
 };
 enum timerFlag {
-	goDown, closeGrip, bringUp, openGrip, none
+	goDown, closeGrip, bringUp, openGrip, weigh, none
 };
 int main(void) {
 //Enable printf() and setServo()
@@ -194,7 +210,9 @@ int main(void) {
 	initADC(HIGHLINK);
 	initADC(4);
 	initADC(1);
-	initTimer(0, NORMAL, 0);
+	initADC(0);
+
+	initTimer(0, 0, 0);
 	timerFlag = none;
 	setConst('L', 40, .5, .005);
 	setConst('H', 40, 0, 0);
@@ -203,17 +221,19 @@ int main(void) {
 	setServo(5, 90);
 	og();
 	while (1) {
-		/*stopMotors();
-		 og();
-		 */
+//		og();
+//		stopMotors();
+//		goToBothLinks(90, 0);
+//		changeADC(1);
+		//analyzeWeight();
+		//analyzeWeight();
 		//setServo(5, 114);
-		printf("%d %d \n\r", count, closeGripMaxCount);
 		switch (state) {
 		case start:
 			gotoXY(0, 31);
 			if (!PINBbits._P0) {
 
-				setServo(5, 114);
+				setServo(5, 113);
 
 				state = getXD;
 
@@ -226,7 +246,7 @@ int main(void) {
 			if (IRDist(4) > 6 && IRDist(4) < 14) {
 
 				xIR = IRDist(4) + 20;
-				//printf("%d %d \n\r", IRDist(4), xIR);
+
 				state = goToXD;
 				//printf("GO TO XD");
 			}
@@ -234,7 +254,7 @@ int main(void) {
 			break;
 		case goToXD:
 			timerFlag = goDown;
-
+			printf("%d %d \n\r", IRDist(4), xIR);
 			if (goDownFlag) {
 				//printf("%d \n\r", xIR);
 				if (xIR >= 32) {
@@ -268,28 +288,58 @@ int main(void) {
 			timerFlag = bringUp;
 			cg();
 
-			if (bringUpFlag)
+			if (bringUpFlag) {
 				bringWeightUp();
-			//			if (closeGripFlag) {
-			//
-			//			} else {
-			//				//	bringWeightUp();
-			//			}
 
+				if (inRange(90, -90)) {
+
+					//printf("here");
+					state = weighWeight;
+				}			//			if (closeGripFlag) {
+				//
+				//			} else {
+				//				//	bringWeightUp();
+				//			}
+			}
 			break;
 
-		case ANALyzeWeight:
-			if (analyzeWeight() > WEIGHTTHRESHOLD)
-				state = heavyWeight;
-			else
+		case weighWeight:
+			bringWeightUp();
+			printf("%ld \n\r", analyzeWeight());
+			//			float testtt = analyzeWeight();
+//			printf("%f \n\r", testtt);
+//			timerFlag = weigh;
+//			if (weighFlag) {
+//
+//				if (testtt < 60 && testtt > 40)
+//					state = garbageCurrent;
+//				else if (testtt < 40)
+//					state = heavyWeight;
+//				else
+//					state = lightWeight;
+//			}
 
-				state = lightWeight;
+			timerFlag = weigh;
+			if (weighFlag) {
+
+				if (analyzeWeight() > 520 && analyzeWeight() > 550)
+					state = garbageCurrent;
+				else if (analyzeWeight() < 520)
+					state = heavyWeight;
+				else
+					state = lightWeight;
+			}
+			break;
+
+		case garbageCurrent:
+			state = weighWeight;
+			weighFlag = 1;
 			break;
 
 		case heavyWeight:
-			//goBackDown();
-			timerFlag = openGrip;
-			if (openGripFlag) {
+			goBackDown();
+			printf("heavy \n\r");
+			if (inRange(15, -30)) {
 				stopMotors();
 				og();
 				state = celebrate;
@@ -298,7 +348,7 @@ int main(void) {
 			break;
 
 		case lightWeight:
-			stopMotors();
+			printf("Light \n\r");
 			og();
 			state = celebrate;
 			break;
@@ -344,6 +394,13 @@ ISR(TIMER0_OVF_vect) {
 		if (count >= openGripMaxCount) {
 			//printf("in");
 			openGripFlag = 1;
+			timerFlag = none;
+		}
+		break;
+	case weigh:
+		if (count >= weighMaxCount) {
+			//printf("in");
+			weighFlag = 1;
 			timerFlag = none;
 		}
 		break;

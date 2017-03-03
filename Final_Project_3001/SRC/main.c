@@ -37,6 +37,8 @@ int armState = 0;
 //next line for triangle
 int nextLine = 0;
 
+////////////////////////////////
+//Variables and Flags
 int pickupFlag = 1;
 int state;
 int xIR = 0;
@@ -53,10 +55,12 @@ int currents[100];
 long currVal = 0;
 int reRunFlag = 0;
 int previousCurrent = 0;
+////////////////////////////
+
 int linkAngle(int angle) {
 	return (angle + 85) / .26;
 }
-
+//This Function controls the lower link
 void goToLowLink(int setPos) {
 	int potVal = linkAngle(setPos);
 
@@ -68,7 +72,7 @@ void goToLowLink(int setPos) {
 
 	driveLink('L', value);
 }
-
+//Controls the higher Link
 void goToHighLink(int setPos) {
 	int potVal = linkAngle(setPos);
 
@@ -80,7 +84,7 @@ void goToHighLink(int setPos) {
 
 	driveLink('H', value);
 }
-
+//Helper function to determine if the arm is in the range of angles it needs to be
 int inRange(int angle1, int angle2) {
 	int val = 0;
 	changeADC(2);
@@ -113,7 +117,7 @@ int inRangeToGrip(int angle1, int angle2) {
 
 	return val;
 }
-
+//Comnination of link movement, uses forward kinematics
 void goToBothLinks(int theta1, int theta2) {
 	if (theta1 > 90) {
 		theta1 = 90;
@@ -133,7 +137,7 @@ void goToBothLinks(int theta1, int theta2) {
 //		stopMotors();
 
 }
-
+//
 void pickupWeight() {
 	changeADC(2);
 
@@ -149,6 +153,8 @@ void pickupWeight() {
 		pickupFlag = 0;
 }
 
+//Determines the weight of the block using the current sensor for the higher link
+//Takes the average  current when the block is held
 long analyzeWeight() {
 	changeADC(1);
 
@@ -163,22 +169,23 @@ long analyzeWeight() {
 	return currVal;
 
 }
+//Goes to the position to put the block back down on the belt
 void goBackDown() {
 	goToBothLinks(15, 60);
 }
+//Closes the gripper
 void cg() {
 	setServo(0, 180);
 }
+//Open Gripper
 void og() {
 	setServo(0, 0);
 }
 void bringWeightUp() {
 	goToBothLinks(90, 0);
 }
-void ggEZ() {
-	goToBothLinks(90, 90);
-}
 
+//States for the state machine
 enum state {
 	start,
 	getXD,
@@ -187,9 +194,9 @@ enum state {
 	weighWeight,
 	garbageCurrent,
 	heavyWeight,
-	lightWeight,
-	celebrate
+	lightWeight
 };
+//Timer flags to determine what to do in the isr
 enum timerFlag {
 	goDown, closeGrip, bringUp, openGrip, weigh, none
 };
@@ -202,10 +209,6 @@ int main(void) {
 
 	debugUSARTInit(115200);
 	initSPI();
-
-//	initTimer(0, NORMAL, 0);
-
-//printf("Encoder Counts\n\r");
 
 	initADC(LOWLINK);
 	initADC(HIGHLINK);
@@ -222,43 +225,24 @@ int main(void) {
 	setServo(5, 90);
 	og();
 	while (1) {
-//		if (IRDist(4) > 6 && IRDist(4) < 14) {
-//
-//			xIR = IRDist(4) + 20;
-//			printf("%d \n\r", xIR);
-//		}
-//		og();
-//		stopMotors();
-//		goToBothLinks(90, 0);
-//		changeADC(1);
-		//analyzeWeight();
-		//analyzeWeight();
-		//setServo(5, 114);
+
+		//Start of State Machine
 		switch (state) {
 		case start:
 			gotoXY(0, 31);
-
-//			if (reRunFlag)
-//				state = getXD;
-//
-//			if (!PINBbits._P0) {
-
 			setServo(5, 113);
 			if (inRange(90, 0)) {
 				state = getXD;
-
-			}	//}
+			}
 			break;
+
 		case getXD:
 			stopMotors();
 			setServo(0, 0);
 			changeADC(4);
 			if (IRDist(4) > 6 && IRDist(4) < 14) {
-
 				xIR = IRDist(4) + 20;
-
 				state = goToXD;
-				//printf("GO TO XD");
 			}
 
 			break;
@@ -266,7 +250,6 @@ int main(void) {
 			timerFlag = goDown;
 			printf("%d %d \n\r", IRDist(4), xIR);
 			if (goDownFlag) {
-				//printf("%d \n\r", xIR);
 				if (xIR >= 32) {
 					goToBothLinks(0, 90);
 					flatCase = 1;
@@ -281,55 +264,29 @@ int main(void) {
 
 			if (closeGripFlag) {
 				printf("here \n\r");
-
 				state = pickUPWeight;
-
 			}
 			if (inRangeToGrip(getTheta1(xIR, 2), getTheta2(xIR, 2))
 					&& flatCase) {
 				stopMotors();
 				state = pickUPWeight;
-
 			}
-			//printf("Pick up weight");
-
 			break;
 
 		case pickUPWeight:
 			timerFlag = bringUp;
 			cg();
-
 			if (bringUpFlag) {
 				bringWeightUp();
-
 				if (inRange(90, -90)) {
-
-					//printf("here");
 					state = weighWeight;
-				}			//			if (closeGripFlag) {
-				//
-				//			} else {
-				//				//	bringWeightUp();
-				//			}
+				}
 			}
 			break;
 
 		case weighWeight:
 			bringWeightUp();
 			printf("%ld \n\r", analyzeWeight());
-			//			float testtt = analyzeWeight();
-			//			printf("%f \n\r", testtt);
-			//			timerFlag = weigh;
-			//			if (weighFlag) {
-			//
-			//				if (testtt < 60 && testtt > 40)
-			//					state = garbageCurrent;
-			//				else if (testtt < 40)
-			//					state = heavyWeight;
-			//				else
-			//					state = lightWeight;
-			//			}
-
 			timerFlag = weigh;
 			if (weighFlag) {
 				int currentReading = analyzeWeight();
@@ -385,10 +342,6 @@ int main(void) {
 
 			break;
 
-		case celebrate:
-			ggEZ();
-			break;
-
 		}
 
 	}
@@ -401,7 +354,6 @@ ISR(TIMER0_OVF_vect) {
 	switch (timerFlag) {
 	case goDown:
 		if (count >= goDownMaxCount) {
-			//printf("in\n\r");
 			goDownFlag = 1;
 			timerFlag = none;
 		}
@@ -416,7 +368,6 @@ ISR(TIMER0_OVF_vect) {
 
 	case bringUp:
 		if (count >= bringUpMaxCount) {
-			//printf("in");
 			bringUpFlag = 1;
 			timerFlag = none;
 
@@ -424,14 +375,12 @@ ISR(TIMER0_OVF_vect) {
 		break;
 	case openGrip:
 		if (count >= openGripMaxCount) {
-			//printf("in");
 			openGripFlag = 1;
 			timerFlag = none;
 		}
 		break;
 	case weigh:
 		if (count >= weighMaxCount) {
-			//printf("in");
 			weighFlag = 1;
 			timerFlag = none;
 		}
